@@ -19,6 +19,18 @@ const app = {
     currentUser: null,
 
     // UI Logic
+    togglePassword: () => {
+        const input = document.getElementById('login-pass');
+        const icon = document.getElementById('pass-icon');
+        if (input.type === "password") {
+            input.type = "text";
+            icon.innerText = "visibility_off";
+        } else {
+            input.type = "password";
+            icon.innerText = "visibility";
+        }
+    },
+
     toggleAccordion: (header) => {
         const section = header.parentElement;
         section.classList.toggle('active');

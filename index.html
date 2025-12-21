@@ -33,8 +33,18 @@
             <p style="font-size: 0.8rem; color: #ccc; margin-bottom: 15px;">Ingresa tus credenciales de administrador
             </p>
 
-            <input type="email" id="login-email" placeholder="correo@ejemplo.com" style="background:#444; color:white;">
-            <input type="password" id="login-pass" placeholder="Contraseña" style="background:#444; color:white;">
+            <input type="email" id="login-email" placeholder="correo@ejemplo.com" style="background:#444; color:white;"
+                onkeydown="if(event.key === 'Enter') app.login()">
+
+            <div style="position: relative;">
+                <input type="password" id="login-pass" placeholder="Contraseña"
+                    style="background:#444; color:white; padding-right: 40px;"
+                    onkeydown="if(event.key === 'Enter') app.login()">
+                <span id="pass-icon" class="material-symbols-outlined" onclick="app.togglePassword()"
+                    style="position: absolute; right: 10px; top: 12px; color: #aaa; cursor: pointer; user-select: none;">
+                    visibility
+                </span>
+            </div>
 
             <button onclick="app.login()" id="btn-login-action" style="margin-top: 10px;">Iniciar Sesión</button>
 
