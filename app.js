@@ -121,7 +121,38 @@ const app = {
 
             if (sbLib && sbLib.createClient) {
                 app.supabase = sbLib.createClient(SUPABASE_URL, SUPABASE_KEY);
-                console.log("✅ Supabase Cliente Conectado");
+                console.log("✅ Supabase Auth Activo");
+
+                // --- GESTIÓN DE SESIÓN ---
+                // 1. Verificar si hay sesión guardada
+                const { data: { session } } = await app.supabase.auth.getSession();
+
+                if (session) {
+                    // 2. Validar que el usuario siga existiendo en el servidor (Seguridad)
+                    const { data: { user }, error } = await app.supabase.auth.getUser();
+
+                    if (error || !user) {
+                        console.warn("Sesión expirada o usuario eliminado. Cerrando...", error);
+                        await app.supabase.auth.signOut();
+                        document.getElementById('login-screen').classList.remove('hidden');
+                    } else {
+                        console.log("Usuario validado:", user.email);
+                        app.currentUser = user;
+                        document.getElementById('login-screen').classList.add('hidden');
+                    }
+                } else {
+                    // No hay sesión
+                    document.getElementById('login-screen').classList.remove('hidden');
+                }
+
+                // 3. Escuchar cambios (logout, etc)
+                app.supabase.auth.onAuthStateChange((event) => {
+                    if (event === 'SIGNED_OUT') {
+                        document.getElementById('login-screen').classList.remove('hidden');
+                        app.currentUser = null;
+                    }
+                });
+
             } else {
                 console.warn("⚠ Librería Supabase no detectada. Modo Offline.");
             }
