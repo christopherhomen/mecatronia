@@ -796,9 +796,19 @@ const app = {
 
                 if (action === 'share' && navigator.share) {
                     try {
+                        const shareText = customText || `Constancia de ingreso para vehículo ${orderData.vehiculo_placa}`;
+
+                        // Fallback Clipboard (Android a veces ignora el texto con imágenes)
+                        try {
+                            if (navigator.clipboard) {
+                                await navigator.clipboard.writeText(shareText);
+                                app.toast("📋 Texto copiado (Pegar si falta)", "info");
+                            }
+                        } catch (cErr) { console.warn("Clipboard failed", cErr); }
+
                         await navigator.share({
                             title: `Orden de Ingreso #${orderData.orden_numero}`,
-                            text: customText || `Constancia de ingreso para vehículo ${orderData.vehiculo_placa}`,
+                            text: shareText,
                             files: [file]
                         });
                     } catch (err) {
