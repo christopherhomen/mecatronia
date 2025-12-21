@@ -77,7 +77,8 @@ const app = {
 
         } catch (err) {
             console.error("Auth Error:", err);
-            errorMsg.innerText = "Credenciales inválidas o error de conexión.";
+            // Mostrar error específico para depurar
+            errorMsg.innerText = "Error: " + (err.message || "Credenciales inválidas");
             errorMsg.style.display = 'block';
         } finally {
             loading.style.display = 'none';
