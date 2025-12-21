@@ -504,6 +504,16 @@ const app = {
             // Pertenencias
             document.getElementById('cap-pertenencias').innerText = orderData.obj_pertenencias || "Ninguna";
 
+            // Solicitud y Notas
+            document.getElementById('cap-solicitud').innerText = orderData.solicitud_cliente || "No detallada";
+            const notasRow = document.getElementById('cap-notas-row');
+            if (orderData.historial_servicio && orderData.historial_servicio.trim().length > 0) {
+                document.getElementById('cap-notas').innerText = orderData.historial_servicio;
+                notasRow.style.display = 'block';
+            } else {
+                notasRow.style.display = 'none';
+            }
+
             // Diagram Clone
             const host = document.getElementById('cap-diagram-host');
             host.innerHTML = '';
