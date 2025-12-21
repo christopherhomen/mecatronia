@@ -657,10 +657,16 @@ const app = {
             // Diagram Clone
             const host = document.getElementById('cap-diagram-host');
             host.innerHTML = '';
-            const svgOrig = document.getElementById('car-svg');
-            const svgClone = svgOrig.cloneNode(true);
-            svgClone.style.width = '100%';
-            host.appendChild(svgClone);
+            host.style.position = 'relative'; // Crucial for markers
+
+            const imgOrig = document.getElementById('car-image');
+            if (imgOrig) {
+                const imgClone = imgOrig.cloneNode(true);
+                imgClone.style.width = '100%';
+                host.appendChild(imgClone);
+            } else {
+                console.warn("Diagrama no encontrado: car-image");
+            }
 
             // Render markers on clone
             const sym = { 'rayon': '➖', 'golpe': '❌', 'sumidura': '⭕' };
