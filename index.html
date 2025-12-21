@@ -328,107 +328,11 @@
                     <div class="accordion-content">
                         <p class="helper-text">Toque en el diagrama para marcar daños.</p>
                         <div class="damage-inspector-container">
-                            <div id="car-diagram-wrapper">
-                                <!-- SVG Car Diagram: Optimized Layout (650x780) for Mobile Visibility -->
-                                <svg viewBox="0 0 650 780" id="car-svg">
-                                    <!-- FRONT VIEW (Top Left) -->
-                                    <g transform="translate(60, 40)">
-                                        <text x="100" y="-15" class="label-text" text-anchor="middle">FRENTE</text>
-                                        <rect x="0" y="90" width="15" height="40" rx="4" fill="#333" />
-                                        <rect x="185" y="90" width="15" height="40" rx="4" fill="#333" />
-                                        <path
-                                            d="M15,80 Q15,30 100,25 Q185,30 185,80 L180,130 Q180,145 100,145 Q20,145 20,130 Z"
-                                            class="car-body" />
-                                        <path d="M35,70 L165,70 L155,35 Q100,30 45,35 Z" class="car-window" />
-                                        <path d="M35,70 L165,70 Q160,110 155,120 L45,120 Q40,110 35,70 Z"
-                                            class="car-body" fill="#fff" opacity="0.1" stroke="#ccc" stroke-width="1" />
-                                        <path d="M35,70 Q45,100 45,120" class="car-line" opacity="0.4" fill="none" />
-                                        <path d="M165,70 Q155,100 155,120" class="car-line" opacity="0.4" fill="none" />
-                                        <path d="M18,90 L55,95 L50,80 L20,85 Z" class="car-light" />
-                                        <path d="M182,90 L145,95 L150,80 L180,85 Z" class="car-light" />
-                                        <path d="M60,123 L140,123 L135,138 L65,138 Z" fill="none" stroke="#444"
-                                            stroke-width="1.5" />
-                                        <circle cx="100" cy="115" r="3" fill="#888" />
-                                        <path d="M25,138 Q100,143 175,138" stroke="#333" stroke-width="2" fill="none"
-                                            opacity="0.5" />
-                                    </g>
+                            <div id="car-diagram-wrapper" style="position: relative;">
+                                <!-- Image Diagram: Optimized PNG -->
+                                <img src="vistas.PNG" id="car-image" alt="Esquema del Vehículo"
+                                    style="width: 100%; height: auto; display: block; border-radius: 8px;">
 
-                                    <!-- REAR VIEW (Top Right) -->
-                                    <g transform="translate(390, 40)">
-                                        <text x="100" y="-15" class="label-text" text-anchor="middle">TRASERA</text>
-                                        <rect x="0" y="90" width="15" height="40" rx="4" fill="#333" />
-                                        <rect x="185" y="90" width="15" height="40" rx="4" fill="#333" />
-                                        <path
-                                            d="M15,80 Q15,30 100,30 Q185,30 185,80 L180,130 Q180,145 100,145 Q20,145 20,130 Z"
-                                            class="car-body" />
-                                        <path d="M35,70 L165,70 L155,35 Q100,30 45,35 Z" class="car-window" />
-                                        <path d="M30,85 L170,85 Q165,120 160,125 L40,125 Q35,120 30,85 Z"
-                                            class="car-body" fill="#fff" opacity="0.1" stroke="#ccc" stroke-width="1" />
-                                        <path d="M20,90 L65,90 L60,105 L20,100 Z" class="car-taillight" />
-                                        <path d="M180,90 L135,90 L140,105 L180,100 Z" class="car-taillight" />
-                                        <rect x="80" y="100" width="40" height="15" fill="#f0f0f0" stroke="#ccc" />
-                                        <path d="M25,135 L175,135" stroke="#333" stroke-width="3" opacity="0.3" />
-                                        <circle cx="45" cy="138" r="4" fill="#555" title="Escape" />
-                                    </g>
-
-                                    <!-- TOP VIEW (Center) - NEW -->
-                                    <g transform="translate(225, 230)">
-                                        <text x="100" y="-15" class="label-text" text-anchor="middle">TECHO /
-                                            SUPERIOR</text>
-                                        <!-- Mirrors -->
-                                        <rect x="-10" y="60" width="15" height="10" rx="2" fill="#333" />
-                                        <rect x="195" y="60" width="15" height="10" rx="2" fill="#333" />
-                                        <!-- Main Body Outline -->
-                                        <path
-                                            d="M0,40 Q0,20 100,15 Q200,20 200,40 L200,160 Q200,180 100,185 Q0,180 0,160 Z"
-                                            class="car-body" />
-                                        <!-- Windshield -->
-                                        <path d="M15,50 L185,50 L175,75 L25,75 Z" class="car-window" />
-                                        <!-- Roof (Techo) -->
-                                        <rect x="20" y="75" width="160" height="70" class="car-body" fill="#fff"
-                                            opacity="0.1" stroke="#ccc" />
-                                        <!-- Rear Window -->
-                                        <path d="M25,145 L175,145 L185,160 L15,160 Z" class="car-window" />
-                                        <!-- Hood (Capota) -->
-                                        <path d="M10,40 L190,40 L185,50 L15,50 Z" fill="none" stroke="#ccc"
-                                            opacity="0.5" />
-                                    </g>
-
-                                    <!-- LEFT SIDE (Bottom Left) -->
-                                    <g transform="translate(10, 480)">
-                                        <text x="150" y="-10" class="label-text" text-anchor="middle">LATERAL
-                                            IZQ.</text>
-                                        <path d="M10,70 L30,60 L70,30 L210,30 L250,60 L290,70 L290,120 L10,120 Z"
-                                            class="car-body" />
-                                        <path d="M75,35 L135,35 L135,60 L45,60 Z" class="car-window" />
-                                        <path d="M145,35 L205,35 L235,60 L145,60 Z" class="car-window" />
-                                        <path d="M50,120 A30,30 0 0,1 110,120" class="car-line"
-                                            stroke-dasharray="2,2" />
-                                        <path d="M210,120 A30,30 0 0,1 270,120" class="car-line"
-                                            stroke-dasharray="2,2" />
-                                        <circle cx="80" cy="120" r="22" fill="#333" />
-                                        <circle cx="240" cy="120" r="22" fill="#333" />
-                                        <line x1="140" y1="35" x2="140" y2="115" class="car-line" opacity="0.3" />
-                                        <rect x="145" y="75" width="20" height="5" rx="2" fill="#333" opacity="0.5" />
-                                    </g>
-
-                                    <!-- RIGHT SIDE (Bottom Right) -->
-                                    <g transform="translate(330, 480)">
-                                        <text x="150" y="-10" class="label-text" text-anchor="middle">LATERAL
-                                            DER.</text>
-                                        <path d="M290,70 L270,60 L230,30 L90,30 L50,60 L10,70 L10,120 L290,120 Z"
-                                            class="car-body" />
-                                        <path d="M225,35 L165,35 L165,60 L255,60 Z" class="car-window" />
-                                        <path d="M155,35 L95,35 L65,60 L155,60 Z" class="car-window" />
-                                        <path d="M250,120 A30,30 0 0,0 190,120" class="car-line"
-                                            stroke-dasharray="2,2" />
-                                        <path d="M90,120 A30,30 0 0,0 30,120" class="car-line" stroke-dasharray="2,2" />
-                                        <circle cx="220" cy="120" r="22" fill="#333" />
-                                        <circle cx="60" cy="120" r="22" fill="#333" />
-                                        <line x1="160" y1="35" x2="160" y2="115" class="car-line" opacity="0.3" />
-                                        <rect x="135" y="75" width="20" height="5" rx="2" fill="#333" opacity="0.5" />
-                                    </g>
-                                </svg>
                                 <!-- Markers Layer -->
                                 <div id="damage-markers-layer"></div>
                             </div>
