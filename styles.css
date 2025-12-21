@@ -117,22 +117,39 @@ h3 {
 /* Optimize Footer Mobile */
 @media (max-width: 600px) {
     .form-actions {
-        padding: 12px;
-        gap: 10px;
+        padding: 10px;
+        gap: 8px;
         justify-content: space-between;
+        flex-wrap: wrap;
+        /* Force buttons to wrap */
     }
 
     .form-actions button {
-        flex: 1;
-        padding: 12px 10px;
-        /* Smaller horizontal padding to fit text */
-        font-size: 1rem;
+        flex: 1 1 45%;
+        /* Approx 50% width */
+        padding: 10px 5px;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Make Save Order standout and full width if needed, or keep 2x2 grid */
+    .btn-save {
+        background-color: var(--primary);
+        font-weight: 800;
+        min-width: 100%;
+        /* Force Save button to take full row at bottom */
+        order: 10;
+        margin-top: 5px;
     }
 
     .btn-cancel {
         margin-right: 0 !important;
-        /* Reset margins */
+        order: 1;
     }
+
+    /* Secondary buttons (Share/Download) will fill the first row */
 }
 
 .hidden {
