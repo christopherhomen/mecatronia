@@ -11,15 +11,12 @@ const DB_NAME = 'ServiAuto_System_New';
 const DB_VERSION = 1;
 const STORE_NAME = 'orders';
 
-// --- CONFIGURACIÓN DE SEGURIDAD (TEMPORAL) ---
-const DEMO_USER = 'meca';
-const DEMO_PASS = 'pelipup2025';
-
 const app = {
     db: null,
     supabase: null,
     currentDamageType: 'rayon',
     damageMarkers: [],
+    currentUser: null,
 
     // UI Logic
     toggleAccordion: (header) => {
@@ -47,25 +44,53 @@ const app = {
         window.open(url, '_blank');
     },
 
-    // Login Method
-    checkLogin: () => {
-        const u = document.getElementById('login-user').value;
-        const p = document.getElementById('login-pass').value;
-        if (u === DEMO_USER && p === DEMO_PASS) {
-            localStorage.setItem('auth_token', 'valid_' + DEMO_PASS);
+    // Real Auth Login
+    login: async () => {
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-pass').value;
+        const errorMsg = document.getElementById('login-error');
+        const loading = document.getElementById('login-loading');
+        const btn = document.getElementById('btn-login-action');
+
+        if (!email || !password) {
+            errorMsg.innerText = "Ingresa correo y contraseña";
+            errorMsg.style.display = 'block';
+            return;
+        }
+
+        // UI Loading
+        errorMsg.style.display = 'none';
+        loading.style.display = 'block';
+        btn.disabled = true;
+
+        try {
+            const { data, error } = await app.supabase.auth.signInWithPassword({
+                email: email,
+                password: password,
+            });
+
+            if (error) throw error;
+
+            console.log("Login exitoso:", data);
             document.getElementById('login-screen').classList.add('hidden');
-        } else {
-            document.getElementById('login-error').style.display = 'block';
+            app.currentUser = data.user;
+
+        } catch (err) {
+            console.error("Auth Error:", err);
+            errorMsg.innerText = "Credenciales inválidas o error de conexión.";
+            errorMsg.style.display = 'block';
+        } finally {
+            loading.style.display = 'none';
+            btn.disabled = false;
         }
     },
 
-    init: async () => {
-        // Auth Check
-        const savedToken = localStorage.getItem('auth_token');
-        if (savedToken === 'valid_' + DEMO_PASS) {
-            document.getElementById('login-screen').classList.add('hidden');
-        }
+    logout: async () => {
+        await app.supabase.auth.signOut();
+        window.location.reload();
+    },
 
+    init: async () => {
         console.log("Iniciando App...");
 
         // Check for direct file opening

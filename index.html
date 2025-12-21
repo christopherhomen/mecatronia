@@ -25,16 +25,23 @@
 </head>
 
 <body>
-    <!-- Login Screen (Temporal) -->
+    <!-- Login Screen (Supabase Auth) -->
     <div id="login-screen">
         <div class="login-box">
             <img src="logo.PNG" style="width: 80px; margin-bottom: 20px;">
-            <p>Acceso Restringido</p>
-            <input type="text" id="login-user" placeholder="Usuario">
-            <input type="password" id="login-pass" placeholder="Contraseña">
-            <button onclick="app.checkLogin()">Ingresar</button>
-            <p id="login-error" style="color: red; font-size: 0.8rem; display: none; margin-top: 10px;">Credenciales
-                incorrectas</p>
+            <p><strong>Acceso MecaTronia</strong></p>
+            <p style="font-size: 0.8rem; color: #ccc; margin-bottom: 15px;">Ingresa tus credenciales de administrador
+            </p>
+
+            <input type="email" id="login-email" placeholder="correo@ejemplo.com" style="background:#444; color:white;">
+            <input type="password" id="login-pass" placeholder="Contraseña" style="background:#444; color:white;">
+
+            <button onclick="app.login()" id="btn-login-action" style="margin-top: 10px;">Iniciar Sesión</button>
+
+            <p id="login-error" style="color: #ff6b6b; font-size: 0.8rem; display: none; margin-top: 10px;">Error de
+                autenticación</p>
+            <div id="login-loading" style="display:none; margin-top:10px;"><span class="loader"></span> Conectando...
+            </div>
         </div>
     </div>
 
@@ -49,7 +56,11 @@
             </div>
             <div class="nav-links">
                 <button id="btn-dashboard" class="nav-btn active">Registros</button>
-                <button id="btn-new" class="nav-btn primary">+ Nuevo Ingreso</button>
+                <button id="btn-new" class="nav-btn primary">+ Nuevo</button>
+                <button onclick="app.logout()" class="nav-btn" style="background:none; border:none; color:white;"
+                    title="Cerrar Sesión">
+                    <span class="material-symbols-outlined">logout</span>
+                </button>
             </div>
         </nav>
 
