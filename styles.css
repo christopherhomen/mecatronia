@@ -417,15 +417,24 @@ textarea:focus {
     width: 24px;
     height: 24px;
     transform: translate(-50%, -50%);
-    font-size: 20px;
+    font-size: 22px;
+    /* Desktop Base Size */
     line-height: 1;
     text-align: center;
     pointer-events: auto;
-    /* Clickable */
     cursor: pointer;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
     z-index: 20;
     animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@media (max-width: 600px) {
+    .marker-spot {
+        width: 16px;
+        height: 16px;
+        font-size: 14px;
+        /* Smaller on mobile to fit diagram */
+    }
 }
 
 @keyframes popIn {
