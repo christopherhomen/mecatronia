@@ -28,6 +28,24 @@ const app = {
         }
     },
 
+    toast: (text, type = 'info') => {
+        if (typeof Toastify !== 'function') { alert(text); return; } // Fallback
+        const colors = {
+            success: "linear-gradient(to right, #00b09b, #96c93d)",
+            error: "linear-gradient(to right, #ff5f6d, #ffc371)",
+            warning: "linear-gradient(to right, #f7b733, #fc4a1a)",
+            info: "#333"
+        };
+        Toastify({
+            text: text,
+            duration: 3000,
+            gravity: "top",
+            position: "center",
+            style: { background: colors[type] || colors.info },
+            close: true
+        }).showToast();
+    },
+
     getFormData: () => {
         const form = document.getElementById('vehicle-form');
         if (!form) return {};
@@ -51,7 +69,7 @@ const app = {
         const phoneInput = document.getElementsByName('cliente_telefono')[0];
         const phone = phoneInput ? phoneInput.value.replace(/\D/g, '') : '';
 
-        if (!phone) { alert("Por favor ingresa un teléfono del cliente."); return; }
+        if (!phone) { app.toast("⚠️ Por favor ingresa un teléfono.", "warning"); return; }
 
         // Recolectar datos actuales
         const data = app.getFormData();
@@ -193,7 +211,8 @@ const app = {
             // 3. Auto-descargar datos remotos al abrir
             setTimeout(app.syncDown, 1000); // 1s de retraso para no bloquear render inicial
         } catch (err) {
-            alert("Error GRAVE iniciando base de datos: " + err);
+            console.error(err);
+            app.toast("Error GRAVE iniciando base de datos: " + err, "error");
         }
     },
 
@@ -347,11 +366,11 @@ const app = {
                     }
 
                     await app.saveOrder(data);
-
-                    alert("✅ Guardado Correctamente");
+                    app.toast("✅ Guardado Correctamente", "success");
+                    app.loadDashboard(); // Assuming loadOrders is loadDashboard
                     app.navigateTo('dashboard');
                 } catch (error) {
-                    alert("❌ Error: " + error.message);
+                    app.toast("❌ Error: " + error.message, "error");
                 } finally {
                     btn.innerText = "Guardar Orden";
                 }
@@ -759,7 +778,7 @@ const app = {
                     document.body.removeChild(link);
 
                     // Solo aviso si es explícitamente "Descargar"
-                    if (action === 'download') alert("✅ Imagen guardada en Descargas/Galería");
+                    if (action === 'download') app.toast("✅ Imagen guardada en Galería", "success");
                 };
 
                 if (action === 'share' && navigator.share) {
@@ -772,7 +791,7 @@ const app = {
                     } catch (err) {
                         if (err.name !== 'AbortError') {
                             console.error(err);
-                            alert("No se pudo abrir menú compartir. Descargando imagen automáticamente.");
+                            app.toast("No se pudo abrir menú compartir. Descargando...", "info");
                             downloadImage();
                         }
                     }
@@ -784,7 +803,7 @@ const app = {
 
         } catch (e) {
             console.error(e);
-            alert("Error: " + e.message + "\n\nNOTA: Si estás abriendo el archivo localmente (doble click), intenta usar un Servidor Local.");
+            app.toast("Error al generar imagen: " + e.message, "error");
         } finally {
             btn.innerText = originalText;
             // Restaurar logo por si acaso
