@@ -1,6 +1,6 @@
 {
-    "name": "ServiAuto Digital",
-    "short_name": "ServiAuto",
+    "name": "MecaTronia App",
+    "short_name": "MecaTronia",
     "start_url": "./index.html",
     "display": "standalone",
     "background_color": "#121212",

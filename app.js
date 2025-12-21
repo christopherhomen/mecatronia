@@ -7,7 +7,7 @@ const SUPABASE_URL = 'https://stqxmrcejfebhngupjya.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_jR5yE8vbXFAWv__W6sFJWg_jNhvbCcl';
 
 // Nombre NUEVO para obligar a borrar cualquier error anterior
-const DB_NAME = 'ServiAuto_System_New';
+const DB_NAME = 'Mecatronia_DB_v1';
 const DB_VERSION = 1;
 const STORE_NAME = 'orders';
 
