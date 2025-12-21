@@ -337,7 +337,10 @@ const app = {
         filtered.reverse().forEach(od => {
             const card = document.createElement('div');
             card.className = 'order-card';
-            card.innerHTML = `
+
+            // Content Container
+            const contentDiv = document.createElement('div');
+            contentDiv.innerHTML = `
                 <div class="order-header">
                     <b>#${od.orden_numero}</b> 
                     <small>${new Date(od.fecha_apertura).toLocaleDateString()}</small>
@@ -346,6 +349,40 @@ const app = {
                 <p>${od.cliente_nombre}</p>
                 <small>${od.pending_sync ? '🚩 Pendiente Subir' : '✅ En Nube'}</small>
             `;
+            card.appendChild(contentDiv);
+
+            // Quick Actions Toolbar
+            const actionsDiv = document.createElement('div');
+            actionsDiv.className = 'card-actions';
+            actionsDiv.style.cssText = "margin-top:10px; padding-top:10px; border-top:1px solid #eee; display:flex; gap:10px; justify-content:flex-end;";
+
+            // Share Button
+            if (navigator.share) {
+                const btnS = document.createElement('button');
+                btnS.className = 'btn-secondary small';
+                btnS.innerHTML = '📤';
+                btnS.title = "Compartir";
+                btnS.onclick = (e) => {
+                    e.stopPropagation(); // Don't open card
+                    app.processCapture(od, 'share', btnS);
+                };
+                actionsDiv.appendChild(btnS);
+            }
+
+            // Download Button
+            const btnD = document.createElement('button');
+            btnD.className = 'btn-secondary small';
+            btnD.innerHTML = '💾';
+            btnD.title = "Guardar Imagen";
+            btnD.onclick = (e) => {
+                e.stopPropagation();
+                app.processCapture(od, 'download', btnD);
+            };
+            actionsDiv.appendChild(btnD);
+
+            card.appendChild(actionsDiv);
+
+            // Main Card Click
             card.onclick = () => app.loadOrderIntoForm(od.id);
             container.appendChild(card);
         });
@@ -428,10 +465,10 @@ const app = {
         });
     },
 
-    processCapture: async (orderData, action) => {
-        const btn = action === 'share' ? document.getElementById('btn-share') : document.getElementById('btn-download');
+    processCapture: async (orderData, action, btnElement = null) => {
+        const btn = btnElement || (action === 'share' ? document.getElementById('btn-share') : document.getElementById('btn-download'));
         const originalText = btn.innerText;
-        btn.innerText = "⏳...";
+        btn.innerText = "⏳";
 
         try {
             // 1. Populate Capture Container (Data is safe)
