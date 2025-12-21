@@ -16,9 +16,6 @@ const app = {
     supabase: null,
     currentDamageType: 'rayon',
     damageMarkers: [],
-    currentUser: null,
-
-    // UI Logic
     togglePassword: () => {
         const input = document.getElementById('login-pass');
         const icon = document.getElementById('pass-icon');
@@ -29,6 +26,20 @@ const app = {
             input.type = "password";
             icon.innerText = "visibility";
         }
+    },
+
+    getFormData: () => {
+        const form = document.getElementById('vehicle-form');
+        if (!form) return {};
+        const fd = new FormData(form);
+        const data = Object.fromEntries(fd.entries());
+        // Checkboxes
+        document.querySelectorAll('#vehicle-form input[type="checkbox"]').forEach(cb => {
+            data[cb.name] = cb.checked;
+        });
+        // Damages
+        data.damages = app.damageMarkers;
+        return data;
     },
 
     toggleAccordion: (header) => {
@@ -562,10 +573,13 @@ const app = {
         const btnShare = document.getElementById('btn-share');
         const btnDownload = document.getElementById('btn-download');
 
+        // Helper para obtener datos merged
+        const getData = () => ({ ...od, ...app.getFormData() });
+
         // Compartir (Solo si soportado)
         if (navigator.share) {
             btnShare.style.display = 'inline-block';
-            btnShare.onclick = () => app.processCapture(od, 'share');
+            btnShare.onclick = () => app.processCapture(getData(), 'share');
         } else {
             btnShare.style.display = 'none';
         }
@@ -573,7 +587,7 @@ const app = {
         // Descargar (Siempre visible)
         if (btnDownload) {
             btnDownload.style.display = 'inline-block';
-            btnDownload.onclick = () => app.processCapture(od, 'download');
+            btnDownload.onclick = () => app.processCapture(getData(), 'download');
         }
     },
 
