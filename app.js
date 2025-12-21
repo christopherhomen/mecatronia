@@ -48,23 +48,35 @@ const app = {
     },
 
     sendWhatsApp: () => {
-        const phone = document.getElementsByName('cliente_telefono')[0].value.replace(/\D/g, '');
+        const phoneInput = document.getElementsByName('cliente_telefono')[0];
+        const phone = phoneInput ? phoneInput.value.replace(/\D/g, '') : '';
+
         if (!phone) { alert("Por favor ingresa un teléfono del cliente."); return; }
 
-        const ord = document.getElementById('orden_numero').value || '???';
-        const name = document.getElementsByName('cliente_nombre')[0].value || 'Cliente';
-        const car = document.getElementsByName('vehiculo_placa')[0].value || 'Vehículo';
-        const date = document.getElementsByName('fecha_entrega')[0].value.replace('T', ' ') || 'Por definir';
+        // Recolectar datos actuales
+        const data = app.getFormData();
+        // Asegurar campos clave
+        data.orden_numero = document.getElementById('orden_numero').value || '???';
+        data.cliente_nombre = document.getElementsByName('cliente_nombre')[0].value || 'Cliente';
+        data.vehiculo_placa = document.getElementsByName('vehiculo_placa')[0].value || 'Vehículo';
+        const dateInput = document.getElementsByName('fecha_entrega')[0];
+        const date = dateInput ? dateInput.value.replace('T', ' ') : 'Por definir';
 
-        let text = `🚗 *Taller Digital - Notificación* 🚗\n\n`;
-        text += `Hola *${name}*, confirmamos la recepción de tu vehículo:\n`;
-        text += `📄 *Orden:* #${ord}\n`;
-        text += `🚙 *Placa:* ${car}\n`;
+        let text = `🚗 *MecaTronia - Notificación* 🚗\n\n`;
+        text += `Hola *${data.cliente_nombre}*, confirmamos la recepción de tu vehículo:\n`;
+        text += `📄 *Orden:* #${data.orden_numero}\n`;
+        text += `🚙 *Placa:* ${data.vehiculo_placa}\n`;
         text += `📅 *Entrega Aprox:* ${date}\n\n`;
-        text += `Tu vehículo está en buenas manos. Recibirás tu constancia detallada como imagen adjunta si la solicitas.`;
+        text += `Tu vehículo está en buenas manos. Adjunto encontrarás la constancia detallada.`;
 
-        const url = `https://wa.me/57${phone}?text=${encodeURIComponent(text)}`;
-        window.open(url, '_blank');
+        // Intentar compartir con imagen (Móvil)
+        if (navigator.share) {
+            app.processCapture(data, 'share', null, text);
+        } else {
+            // Fallback Desktop
+            const url = `https://wa.me/57${phone}?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+        }
     },
 
     // Real Auth Login
@@ -616,7 +628,7 @@ const app = {
         });
     },
 
-    processCapture: async (orderData, action, btnElement = null) => {
+    processCapture: async (orderData, action, btnElement = null, customText = null) => {
         const btn = btnElement || (action === 'share' ? document.getElementById('btn-share') : document.getElementById('btn-download'));
         const originalText = btn.innerText;
         btn.innerText = "⏳";
@@ -753,7 +765,7 @@ const app = {
                     try {
                         await navigator.share({
                             title: `Orden de Ingreso #${orderData.orden_numero}`,
-                            text: `Constancia de ingreso para vehículo ${orderData.vehiculo_placa}`,
+                            text: customText || `Constancia de ingreso para vehículo ${orderData.vehiculo_placa}`,
                             files: [file]
                         });
                     } catch (err) {
