@@ -637,6 +637,7 @@ const app = {
             // 1. Populate Capture Container (Data is safe)
             document.getElementById('cap-orden').innerText = '#' + orderData.orden_numero;
             document.getElementById('cap-fecha').innerText = "Ingreso: " + new Date(orderData.fecha_apertura).toLocaleString();
+            document.getElementById('cap-asesor').innerText = orderData.asesor_servicio || ''; // Asesor Name
 
             // Fecha Entrega
             const entregaEl = document.getElementById('cap-entrega');
