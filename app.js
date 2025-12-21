@@ -56,7 +56,16 @@ const app = {
             data[cb.name] = cb.checked;
         });
         // Damages
+        // Damages
         data.damages = app.damageMarkers;
+
+        // Firma (Canvas a Imagen)
+        const sigCanvas = document.getElementById('signature-pad');
+        if (sigCanvas) {
+            // Verificar si está vacío sería ideal, pero toDataURL captura lo que hay
+            data.signature = sigCanvas.toDataURL('image/png');
+        }
+
         return data;
     },
 
