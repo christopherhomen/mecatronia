@@ -493,7 +493,16 @@ const app = {
         try {
             // 1. Populate Capture Container (Data is safe)
             document.getElementById('cap-orden').innerText = '#' + orderData.orden_numero;
-            document.getElementById('cap-fecha').innerText = new Date(orderData.fecha_apertura).toLocaleString();
+            document.getElementById('cap-fecha').innerText = "Ingreso: " + new Date(orderData.fecha_apertura).toLocaleString();
+
+            // Fecha Entrega
+            const entregaEl = document.getElementById('cap-entrega');
+            if (orderData.fecha_entrega) {
+                entregaEl.innerText = new Date(orderData.fecha_entrega).toLocaleString();
+            } else {
+                entregaEl.innerText = "Por Confirmar";
+            }
+
             document.getElementById('cap-cliente').innerText = orderData.cliente_nombre;
             document.getElementById('cap-id').innerText = orderData.cliente_id || 'N/A';
             document.getElementById('cap-placa').innerText = orderData.vehiculo_placa;
