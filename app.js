@@ -96,9 +96,15 @@ const app = {
         text += `📅 *Entrega Aprox:* ${date}\n\n`;
         text += `Tu vehículo está en buenas manos. Adjunto encontrarás la constancia detallada.`;
 
-        // Usamos el flujo directo: Descargar Imagen -> Abrir WhatsApp con número
-        // Esto garantiza que se abra el chat del número específico, aunque la imagen deba adjuntarse manual.
-        app.processCapture(data, 'whatsapp_direct', null, text);
+        // Intentar compartir nativo (Adjunta Imagen Automáticamente)
+        // NOTA: El usuario deberá seleccionar el contacto manualmente en Android/iOS.
+        if (navigator.share) {
+            app.processCapture(data, 'share', null, text); // Usa la lógica de Clipboard + Share
+        } else {
+            // Fallback Desktop (Solo texto, directo al número)
+            const url = `https://wa.me/57${phone}?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+        }
     },
 
     // Real Auth Login
