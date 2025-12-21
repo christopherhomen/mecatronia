@@ -366,7 +366,7 @@ const app = {
             if (navigator.share) {
                 const btnS = document.createElement('button');
                 btnS.className = 'btn-secondary small';
-                btnS.innerHTML = '📤';
+                btnS.innerHTML = '<span class="material-symbols-outlined" style="font-size:1.2rem; vertical-align:middle;">share</span>';
                 btnS.title = "Compartir";
                 btnS.onclick = (e) => {
                     e.stopPropagation(); // Don't open card
@@ -378,7 +378,7 @@ const app = {
             // Download Button
             const btnD = document.createElement('button');
             btnD.className = 'btn-secondary small';
-            btnD.innerHTML = '💾';
+            btnD.innerHTML = '<span class="material-symbols-outlined" style="font-size:1.2rem; vertical-align:middle;">download</span>';
             btnD.title = "Guardar Imagen";
             btnD.onclick = (e) => {
                 e.stopPropagation();

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -15,6 +15,9 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;700&display=swap"
         rel="stylesheet">
+    <!-- Google Icons -->
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <!-- Supabase Library for Cloud Sync -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- HTML2Canvas for Screenshots -->
@@ -444,13 +447,18 @@
 
                 <!-- Actions -->
                 <!-- Actions -->
-                <div class="form-actions sticky-footer">
+                                <div class="form-actions sticky-footer">
                     <button type="button" class="btn-cancel" onclick="app.navigateTo('dashboard')">Cancelar</button>
-                    <button type="button" id="btn-download" class="btn-secondary"
-                        style="display:none; margin-right:5px;">� Guardar</button>
-                    <button type="button" id="btn-share" class="btn-secondary" style="display:none;">📤
-                        Compartir</button>
-                    <button type="submit" class="btn-save">Guardar Orden</button>
+                    <!-- Buttons for Image -->
+                    <button type="button" id="btn-download" class="btn-secondary" style="display:none; justify-content: center; align-items: center; gap: 5px;">
+                        <span class="material-symbols-outlined">download</span> Img
+                    </button>
+                    <button type="button" id="btn-share" class="btn-secondary" style="display:none; justify-content: center; align-items: center; gap: 5px;">
+                        <span class="material-symbols-outlined">share</span> Enviar
+                    </button>
+                    <button type="submit" class="btn-save" style="display: flex; justify-content: center; align-items: center; gap: 8px;">
+                        <span class="material-symbols-outlined">save</span> Guardar Orden
+                    </button>
                 </div>
             </form>
         </main>
