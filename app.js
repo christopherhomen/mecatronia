@@ -645,7 +645,7 @@ const app = {
     renderMarkers: () => {
         const l = document.getElementById('damage-markers-layer');
         l.innerHTML = '';
-        const sym = { 'rayon': '➖', 'golpe': '❌', 'sumidura': '⭕' };
+        const sym = { 'rayon': '➖', 'golpe': '❌', 'sumidura': '🟠' };
         app.damageMarkers.forEach(m => {
             const d = document.createElement('div');
             d.className = 'marker-spot';
@@ -724,7 +724,7 @@ const app = {
             }
 
             // Render markers on clone
-            const sym = { 'rayon': '➖', 'golpe': '❌', 'sumidura': '⭕' };
+            const sym = { 'rayon': '➖', 'golpe': '❌', 'sumidura': '🟠' };
             (orderData.damages || []).forEach(m => {
                 const d = document.createElement('div');
                 d.style.position = 'absolute';
