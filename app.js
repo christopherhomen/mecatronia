@@ -50,6 +50,8 @@ const app = {
             app.setupEventListeners();
             app.loadDashboard();
             app.setupSync();
+            // 3. Auto-descargar datos remotos al abrir
+            setTimeout(app.syncDown, 1000); // 1s de retraso para no bloquear render inicial
         } catch (err) {
             alert("Error GRAVE iniciando base de datos: " + err);
         }
@@ -237,6 +239,10 @@ const app = {
 
         // Inicializar Firma
         app.setupSignature();
+
+        // Botón Sync Manual
+        const btnSync = document.getElementById('btn-sync-down');
+        if (btnSync) btnSync.onclick = app.syncDown;
     },
 
     setupSignature: () => {
@@ -601,6 +607,69 @@ const app = {
             // Restaurar logo por si acaso
             const logoImg = document.getElementById('capture-container').querySelector('img');
             if (logoImg) logoImg.style.display = 'block';
+        }
+    },
+
+    syncDown: async () => {
+        if (!app.supabase) return;
+        const btn = document.getElementById('btn-sync-down');
+        if (btn) btn.classList.add('rotating'); // Añadir CSS para rotar si se quiere
+
+        try {
+            const { data, error } = await app.supabase.from('orders').select('*');
+            if (error) throw error;
+            if (!data) return;
+
+            const tx = app.db.transaction([STORE_NAME], "readwrite");
+            const store = tx.objectStore(STORE_NAME);
+            const index = store.index('orden_numero');
+
+            // Promesa para manejar la transacción
+            await new Promise((resolve, reject) => {
+                let processed = 0;
+                if (data.length === 0) resolve();
+
+                data.forEach(remoteRecord => {
+                    // Verificar si ya existe localmente
+                    const req = index.get(remoteRecord.orden_numero);
+                    req.onsuccess = () => {
+                        const localRecord = req.result;
+                        // Estrategia: "Nube manda" si no existe localmente.
+                        // Si existe localmente, solo sobrescribimos si NO tiene cambios pendientes.
+
+                        // Vamos a insertar/actualizar
+                        // Aseguramos que pending_sync sea false porque viene de la nube
+                        remoteRecord.pending_sync = false;
+
+                        // Si existe localmente, preservamos su ID de IndexedDB para no crear duplicados
+                        if (localRecord) {
+                            remoteRecord.id = localRecord.id;
+                            // Si local tiene cambios pendientes, NO sobrescribimos (protección)
+                            if (localRecord.pending_sync) {
+                                processed++;
+                                if (processed === data.length) resolve();
+                                return;
+                            }
+                        }
+
+                        store.put(remoteRecord);
+                        processed++;
+                        if (processed === data.length) resolve();
+                    };
+                    req.onerror = () => {
+                        processed++;
+                        if (processed === data.length) resolve();
+                    }
+                });
+            });
+
+            console.log("⬇ Datos descargados de la nube:", data.length);
+            app.loadDashboard(); // Refrescar UI
+
+        } catch (err) {
+            console.error("Error SyncDown:", err);
+        } finally {
+            if (btn) btn.classList.remove('rotating');
         }
     },
 

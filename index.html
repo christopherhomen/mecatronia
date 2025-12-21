@@ -40,8 +40,10 @@
         <!-- View: Dashboard (List of Orders) -->
         <main id="view-dashboard" class="view active">
             <header class="section-header">
-                <h1>Historial de Ingresos <span id="total-orders"
-                        style="font-size: 0.6em; color: var(--primary);">(0)</span></h1>
+                <h1>Historial <span id="total-orders" style="font-size: 0.6em; color: var(--primary);">(0)</span>
+                    <button id="btn-sync-down" title="Descargar datos de la nube"
+                        style="background:none; border:none; font-size:0.8em; cursor:pointer;">🔄</button>
+                </h1>
                 <div class="search-bar">
                     <input type="text" id="search-input" placeholder="Buscar por placa, cliente u orden...">
                 </div>
