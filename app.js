@@ -96,15 +96,9 @@ const app = {
         text += `📅 *Entrega Aprox:* ${date}\n\n`;
         text += `Tu vehículo está en buenas manos. Adjunto encontrarás la constancia detallada.`;
 
-        // Intentar compartir nativo (Adjunta Imagen Automáticamente)
-        // NOTA: El usuario deberá seleccionar el contacto manualmente en Android/iOS.
-        if (navigator.share) {
-            app.processCapture(data, 'share', null, text); // Usa la lógica de Clipboard + Share
-        } else {
-            // Fallback Desktop (Solo texto, directo al número)
-            const url = `https://wa.me/57${phone}?text=${encodeURIComponent(text)}`;
-            window.open(url, '_blank');
-        }
+        // Usuario exigió ir directo al número.
+        // Solución técnica: Descargar/Copiar imagen y abrir chat directo.
+        app.processCapture(data, 'whatsapp_direct', null, text);
     },
 
     // Real Auth Login
@@ -820,9 +814,23 @@ const app = {
                         }
                     }
                 } else if (action === 'whatsapp_direct') {
-                    // 1. Descargar Imagen siempre
+                    // 1. Descargar (Backup)
                     downloadImage();
-                    app.toast("✅ Imagen descargada. Adjúntala en el chat.", "success");
+
+                    // 2. Intentar Copiar Imagen para pegar directo (Android/iOS 123+)
+                    try {
+                        // Intentar escribir Blob en portapapeles
+                        if (typeof ClipboardItem !== "undefined") {
+                            const clipboardData = [new ClipboardItem({ [blob.type]: blob })];
+                            await navigator.clipboard.write(clipboardData);
+                            app.toast("📋 Imagen COPIADA al portapapeles.\n¡Mantén pulsado y PÉGALA!", "success");
+                        } else {
+                            app.toast("✅ Imagen descargada.\nAdjúntala con el clip 📎", "success");
+                        }
+                    } catch (cpErr) {
+                        console.warn("Clipboard Write Failed:", cpErr);
+                        app.toast("✅ Imagen descargada.\nAdjúntala con el clip 📎", "success");
+                    }
 
                     // 2. Abrir WhatsApp Directo (con delay para permitir descarga)
                     const phone = (orderData.cliente_telefono || '').replace(/\D/g, '');
