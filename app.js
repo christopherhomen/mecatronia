@@ -405,8 +405,22 @@ const app = {
         // Rellenar inputs
         Object.keys(od).forEach(k => {
             if (form.elements[k]) {
-                if (form.elements[k].type === 'checkbox') form.elements[k].checked = od[k];
-                else form.elements[k].value = od[k];
+                const el = form.elements[k];
+                if (el.type === 'checkbox') {
+                    el.checked = od[k];
+                } else if (el.type === 'datetime-local' && od[k]) {
+                    // Fix para datetime-local: requiere formato YYYY-MM-DDThh:mm
+                    // Supabase devuelve ISO completo (con Z o milisegundos), que el input a veces rechaza.
+                    // Cortamos en el minuto 16 (YYYY-MM-DDThh:mm)
+                    try {
+                        const iso = new Date(od[k]).toISOString();
+                        el.value = iso.slice(0, 16);
+                    } catch (e) {
+                        el.value = od[k]; // Fallback
+                    }
+                } else {
+                    el.value = od[k];
+                }
             }
         });
         document.getElementById('order_id').value = od.id;
