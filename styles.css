@@ -681,3 +681,66 @@ textarea:focus {
     border-radius: 5px;
     cursor: pointer;
 }
+
+/* --- Accordions --- */
+.form-section {
+    padding: 0 !important; /* Remove padding from card, move to content */
+    overflow: hidden;
+}
+
+.accordion-header {
+    background: #2a2a2a;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    border-bottom: 1px solid #333;
+}
+
+.accordion-header h2, .accordion-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--primary);
+}
+
+.accordion-content {
+    padding: 20px;
+    display: none; /* Hidden by default */
+}
+
+.form-section.active .accordion-content {
+    display: block;
+    animation: slideDown 0.3s ease-out;
+}
+
+.form-section.active .material-symbols-outlined.arrow {
+    transform: rotate(180deg);
+}
+
+.material-symbols-outlined.arrow {
+    transition: transform 0.3s ease;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- WhatsApp Button --- */
+.btn-whatsapp {
+    background-color: #25D366 !important;
+    color: white !important;
+    border: none;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%; /* Mobile full width */
+}
+
+.btn-whatsapp:hover {
+    background-color: #128C7E !important;
+}
+

@@ -21,6 +21,32 @@ const app = {
     currentDamageType: 'rayon',
     damageMarkers: [],
 
+    // UI Logic
+    toggleAccordion: (header) => {
+        const section = header.parentElement;
+        section.classList.toggle('active');
+    },
+
+    sendWhatsApp: () => {
+        const phone = document.getElementsByName('cliente_telefono')[0].value.replace(/\D/g, '');
+        if (!phone) { alert("Por favor ingresa un teléfono del cliente."); return; }
+
+        const ord = document.getElementById('orden_numero').value || '???';
+        const name = document.getElementsByName('cliente_nombre')[0].value || 'Cliente';
+        const car = document.getElementsByName('vehiculo_placa')[0].value || 'Vehículo';
+        const date = document.getElementsByName('fecha_entrega')[0].value.replace('T', ' ') || 'Por definir';
+
+        let text = `🚗 *Taller Digital - Notificación* 🚗\n\n`;
+        text += `Hola *${name}*, confirmamos la recepción de tu vehículo:\n`;
+        text += `📄 *Orden:* #${ord}\n`;
+        text += `🚙 *Placa:* ${car}\n`;
+        text += `📅 *Entrega Aprox:* ${date}\n\n`;
+        text += `Tu vehículo está en buenas manos. Recibirás tu constancia detallada como imagen adjunta si la solicitas.`;
+
+        const url = `https://wa.me/57${phone}?text=${encodeURIComponent(text)}`;
+        window.open(url, '_blank');
+    },
+
     // Login Method
     checkLogin: () => {
         const u = document.getElementById('login-user').value;
