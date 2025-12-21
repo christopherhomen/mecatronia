@@ -738,9 +738,11 @@ const app = {
 
             // Signature
             const sigImg = document.getElementById('cap-signature');
-            if (orderData.signature && orderData.signature.length > 100) { // Check length to ensure it's not empty data
+            if (orderData.signature && orderData.signature.length > 50) {
                 sigImg.src = orderData.signature;
                 sigImg.style.display = 'block';
+                // Esperar a que renderice el src
+                await new Promise(resolve => setTimeout(resolve, 150));
             } else {
                 sigImg.style.display = 'none';
             }
