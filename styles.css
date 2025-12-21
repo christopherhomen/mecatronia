@@ -97,6 +97,8 @@ h3 {
 /* MAIN LAYOUT */
 .view {
     padding: 20px;
+    padding-bottom: 120px;
+    /* Space for fixed footer */
     max-width: 1200px;
     margin: 0 auto;
     opacity: 0;
@@ -110,6 +112,27 @@ h3 {
     display: block;
     opacity: 1;
     transform: translateY(0);
+}
+
+/* Optimize Footer Mobile */
+@media (max-width: 600px) {
+    .form-actions {
+        padding: 12px;
+        gap: 10px;
+        justify-content: space-between;
+    }
+
+    .form-actions button {
+        flex: 1;
+        padding: 12px 10px;
+        /* Smaller horizontal padding to fit text */
+        font-size: 1rem;
+    }
+
+    .btn-cancel {
+        margin-right: 0 !important;
+        /* Reset margins */
+    }
 }
 
 .hidden {
