@@ -766,24 +766,26 @@ const app = {
                 logoImg.style.display = 'none';
             }
 
-            // 2. Capture
+            // 2. Capture (High Quality for HD)
             const canvas = await html2canvas(captureContainer, {
-                scale: 2,
+                scale: 3, // Higher resolution for "HD" support
                 useCORS: true,
-                allowTaint: false // Fail if tainted so we catch it? No, we tried to prevent it.
+                allowTaint: false
             });
 
             // 3. Share or Download Choice
+            // Use JPEG for better compatibility with Android WhatsApp "HD" photo flow
             canvas.toBlob(async (blob) => {
                 if (!blob) throw new Error("No se pudo generar el archivo de imagen.");
 
-                const file = new File([blob], `Orden_${orderData.orden_numero}.png`, { type: 'image/png' });
+                const fileName = `Orden_${orderData.orden_numero}.jpg`;
+                const file = new File([blob], fileName, { type: 'image/jpeg' });
 
                 // Función auxiliar para descargar
                 const downloadImage = () => {
                     const link = document.createElement('a');
-                    link.download = `Orden_${orderData.orden_numero}.png`;
-                    link.href = canvas.toDataURL();
+                    link.download = fileName;
+                    link.href = canvas.toDataURL('image/jpeg', 0.95);
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
@@ -810,7 +812,7 @@ const app = {
                     // Si es download o no soporta share
                     downloadImage();
                 }
-            });
+            }, 'image/jpeg', 0.95);
 
         } catch (e) {
             console.error(e);
