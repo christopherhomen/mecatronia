@@ -25,6 +25,19 @@
 </head>
 
 <body>
+    <!-- Login Screen (Temporal) -->
+    <div id="login-screen">
+        <div class="login-box">
+            <img src="logo.PNG" style="width: 80px; margin-bottom: 20px;">
+            <p>Acceso Restringido</p>
+            <input type="text" id="login-user" placeholder="Usuario">
+            <input type="password" id="login-pass" placeholder="Contraseña">
+            <button onclick="app.checkLogin()">Ingresar</button>
+            <p id="login-error" style="color: red; font-size: 0.8rem; display: none; margin-top: 10px;">Credenciales
+                incorrectas</p>
+        </div>
+    </div>
+
     <div id="app">
         <!-- Navigation -->
         <nav class="navbar">

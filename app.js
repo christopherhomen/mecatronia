@@ -11,13 +11,35 @@ const DB_NAME = 'ServiAuto_System_New';
 const DB_VERSION = 1;
 const STORE_NAME = 'orders';
 
+// --- CONFIGURACIÓN DE SEGURIDAD (TEMPORAL) ---
+const DEMO_USER = 'meca';
+const DEMO_PASS = 'pelipup2025';
+
 const app = {
     db: null,
     supabase: null,
     currentDamageType: 'rayon',
     damageMarkers: [],
 
+    // Login Method
+    checkLogin: () => {
+        const u = document.getElementById('login-user').value;
+        const p = document.getElementById('login-pass').value;
+        if (u === DEMO_USER && p === DEMO_PASS) {
+            localStorage.setItem('auth_token', 'valid_' + DEMO_PASS);
+            document.getElementById('login-screen').classList.add('hidden');
+        } else {
+            document.getElementById('login-error').style.display = 'block';
+        }
+    },
+
     init: async () => {
+        // Auth Check
+        const savedToken = localStorage.getItem('auth_token');
+        if (savedToken === 'valid_' + DEMO_PASS) {
+            document.getElementById('login-screen').classList.add('hidden');
+        }
+
         console.log("Iniciando App...");
 
         // Check for direct file opening
