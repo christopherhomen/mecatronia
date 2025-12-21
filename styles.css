@@ -1,0 +1,597 @@
+:root {
+    --bg-app: #121212;
+    --bg-card: #1E1E1E;
+    --bg-input: #2A2A2A;
+    --color-text-main: #E0E0E0;
+    --color-text-muted: #A0A0A0;
+    --primary: #FF8800;
+    /* Mechanic Orange */
+    --primary-hover: #FFA040;
+    --danger: #FF4444;
+    --success: #00CC66;
+    --border-radius: 12px;
+    --nav-height: 70px;
+    --shadow-card: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-app);
+    color: var(--color-text-main);
+    padding-bottom: 80px;
+    /* Space for sticky footer */
+}
+
+h1,
+h2,
+h3 {
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: 0.5px;
+    color: #FFF;
+}
+
+/* NAVBAR */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    height: var(--nav-height);
+    background-color: rgba(30, 30, 30, 0.95);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid #333;
+}
+
+.logo-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+}
+
+.logo-text span {
+    color: var(--primary);
+}
+
+.nav-links {
+    display: flex;
+    gap: 15px;
+}
+
+.nav-btn {
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.nav-btn.active {
+    color: white;
+    border-bottom: 2px solid var(--primary);
+}
+
+.nav-btn.primary {
+    background: var(--primary);
+    color: black;
+    padding: 8px 16px;
+    border-radius: 20px;
+}
+
+.nav-btn.primary:hover {
+    transform: scale(1.05);
+    background: var(--primary-hover);
+}
+
+/* MAIN LAYOUT */
+.view {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    display: none;
+    /* Hidden by default */
+}
+
+.view.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* DASHBOARD */
+.section-header {
+    margin-bottom: 24px;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--bg-card);
+    border: 1px solid #333;
+    border-radius: var(--border-radius);
+    color: white;
+    font-size: 1rem;
+    margin-top: 10px;
+}
+
+.orders-grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.order-card {
+    background: var(--bg-card);
+    padding: 16px;
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--primary);
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.order-card:hover {
+    transform: translateY(-2px);
+    background: #252525;
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+}
+
+.order-plate {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.8rem;
+    color: white;
+    margin-bottom: 4px;
+}
+
+.order-client {
+    font-size: 1rem;
+    color: var(--color-text-main);
+}
+
+/* FORMS */
+.card {
+    background: var(--bg-card);
+    padding: 24px;
+    border-radius: var(--border-radius);
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-card);
+}
+
+.form-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.btn-back {
+    background: none;
+    border: 1px solid #444;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.form-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.grid-2-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 768px) {
+    .grid-2-col {
+        grid-template-columns: 1fr;
+    }
+}
+
+.form-group {
+    flex: 1;
+    min-width: 200px;
+    margin-bottom: 12px;
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    font-weight: 500;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid #333;
+    padding: 12px;
+    border-radius: 8px;
+    color: white;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+
+input:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+/* Specific Inputs */
+.large-input {
+    font-size: 1.5rem;
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 700;
+    text-align: center;
+    background: #000;
+}
+
+/* Inventory Checkboxes */
+.inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 12px;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    background: var(--bg-input);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    user-select: none;
+}
+
+.checkbox-container input {
+    width: auto;
+    accent-color: var(--primary);
+}
+
+/* Car Diagram & Inspector Fix */
+/* Car Diagram & Inspector Styles */
+.damage-inspector-container {
+    background: #f5f5f5;
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+}
+
+#car-diagram-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    max-width: 800px;
+    cursor: crosshair;
+    user-select: none;
+    -webkit-user-select: none;
+    line-height: 0;
+}
+
+#car-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    pointer-events: none;
+}
+
+/* New Detailed Car Styles */
+.car-body {
+    fill: #ffffff;
+    stroke: #333;
+    stroke-width: 2px;
+    vector-effect: non-scaling-stroke;
+}
+
+.car-window {
+    fill: #e1f5fe;
+    /* Light Blue */
+    stroke: #333;
+    stroke-width: 2px;
+}
+
+.car-light {
+    fill: #fff9c4;
+    /* Light Yellow */
+    stroke: #333;
+}
+
+.car-taillight {
+    fill: #ffcdd2;
+    /* Light Red */
+    stroke: #b71c1c;
+}
+
+.car-line {
+    fill: none;
+    stroke: #333;
+    stroke-width: 2px;
+    stroke-linecap: round;
+}
+
+.car-part-hover:hover {
+    fill: #eee;
+}
+
+.label-text {
+    font-size: 16px;
+    font-weight: 700;
+    fill: #333;
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Marker Layer (Restored) */
+#damage-markers-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    /* CRITICAL */
+    overflow: hidden;
+    z-index: 10;
+}
+
+.marker-spot {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    transform: translate(-50%, -50%);
+    font-size: 20px;
+    line-height: 1;
+    text-align: center;
+    pointer-events: auto;
+    /* Clickable */
+    cursor: pointer;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    z-index: 20;
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+    from {
+        transform: translate(-50%, -50%) scale(0);
+    }
+
+    to {
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+.damage-controls {
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #eee;
+    padding: 10px;
+    border-radius: 8px;
+    color: #333;
+}
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+.badge.yellow {
+    background: #ffeb3b;
+}
+
+.badge.red {
+    background: #ff5252;
+    color: white;
+}
+
+.badge.blue {
+    background: #448aff;
+    color: white;
+}
+
+/* Sticky Footer */
+.sticky-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-card);
+    padding: 16px 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    border-top: 1px solid #333;
+    z-index: 90;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.btn-save {
+    background: var(--primary);
+    color: black;
+    border: none;
+    padding: 12px 32px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+.btn-cancel {
+    background: transparent;
+    color: var(--color-text-main);
+    border: 1px solid #555;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    background: #444;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    color: var(--color-text-muted);
+}
+
+/* --- NEW LOGO & FUEL STYLES (ADDED) --- */
+
+/* Logo */
+/* Logo */
+.brand-logo {
+    height: 40px;
+    /* Reduced from 50px */
+    width: auto;
+    object-fit: contain;
+}
+
+@media (max-width: 600px) {
+    :root {
+        --nav-height: 55px;
+        /* Compacter header on mobile */
+    }
+
+    .brand-logo {
+        height: 25px;
+        /* Much smaller for mobile */
+    }
+
+    .navbar {
+        padding: 0 15px;
+        /* Less padding on sides */
+    }
+}
+
+/* Fuel Selector Segmented Control */
+.fuel-selector-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 10px;
+    background: #1a1a1a;
+    padding: 6px;
+    border-radius: var(--border-radius);
+    border: 1px solid #333;
+}
+
+.fuel-option {
+    flex: 1;
+    cursor: pointer;
+    position: relative;
+}
+
+/* Hide actual radio input */
+.fuel-option input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+/* The visual box */
+.fuel-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    background: var(--bg-input);
+    border: 1px solid #444;
+    border-radius: 6px;
+    color: var(--color-text-muted);
+    font-weight: 700;
+    font-family: 'Oswald', sans-serif;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 1.1rem;
+}
+
+/* Hover effect */
+.fuel-option:hover .fuel-box {
+    border-color: #666;
+    background: #333;
+}
+
+/* Selected States - Color Coding */
+.fuel-option input:checked+.fuel-box {
+    color: #000;
+    border-color: transparent;
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Specific Colors for Levels */
+.fuel-option input:checked+.level-0 {
+    background: #FF4444;
+    /* Red for Empty */
+    color: white;
+}
+
+.fuel-option input:checked+.level-25 {
+    background: #FF8800;
+    /* Orange */
+}
+
+.fuel-option input:checked+.level-50 {
+    background: #FFD600;
+    /* Yellow */
+}
+
+.fuel-option input:checked+.level-75 {
+    background: #AEEA00;
+    /* Light Green */
+}
+
+.fuel-option input:checked+.level-100 {
+    background: #00CC66;
+    /* Green */
+}
