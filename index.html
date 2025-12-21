@@ -289,47 +289,56 @@
                                 <!-- FRONT VIEW (Top Left) -->
                                 <g transform="translate(50, 40)">
                                     <text x="100" y="-15" class="label-text" text-anchor="middle">FRENTE</text>
-                                    <!-- Silhouette -->
+                                    <!-- Tires (Visible slightly sticking out) -->
+                                    <rect x="0" y="90" width="15" height="40" rx="4" fill="#333" />
+                                    <rect x="185" y="90" width="15" height="40" rx="4" fill="#333" />
+                                    <!-- Silhouette (Main Body) -->
                                     <path
-                                        d="M10,80 Q10,30 100,30 Q190,30 190,80 L185,130 Q185,145 100,145 Q15,145 15,130 Z"
+                                        d="M15,80 Q15,30 100,25 Q185,30 185,80 L180,130 Q180,145 100,145 Q20,145 20,130 Z"
                                         class="car-body" />
                                     <!-- Windshield -->
-                                    <path d="M30,70 L170,70 L160,40 Q100,35 40,40 Z" class="car-window" />
-                                    <!-- Hood Lines -->
-                                    <path d="M30,70 Q50,105 60,115" class="car-line" opacity="0.3" fill="none" />
-                                    <path d="M170,70 Q150,105 140,115" class="car-line" opacity="0.3" fill="none" />
-                                    <!-- Headlights (Modern Angular) -->
-                                    <path d="M15,95 L55,100 L50,85 L15,88 Z" class="car-light" />
-                                    <path d="M185,95 L145,100 L150,85 L185,88 Z" class="car-light" />
-                                    <!-- Grille -->
-                                    <path d="M65,100 L135,100 L130,125 L70,125 Z" fill="none" stroke="#444"
-                                        stroke-width="2" class="car-line" />
-                                    <!-- Logo placeholder -->
-                                    <circle cx="100" cy="90" r="3" fill="#888" />
-                                    <!-- Lower Bumper -->
-                                    <path d="M25,135 Q100,140 175,135" stroke="#333" stroke-width="2" fill="none"
+                                    <path d="M35,70 L165,70 L155,35 Q100,30 45,35 Z" class="car-window" />
+                                    <!-- Hood (Capota) Area - Distinctly drawn for marking damages -->
+                                    <path d="M35,70 L165,70 Q160,110 155,120 L45,120 Q40,110 35,70 Z" class="car-body"
+                                        fill="#fff" opacity="0.1" stroke="#ccc" stroke-width="1" />
+                                    <!-- Hood Crease Lines -->
+                                    <path d="M35,70 Q45,100 45,120" class="car-line" opacity="0.4" fill="none" />
+                                    <path d="M165,70 Q155,100 155,120" class="car-line" opacity="0.4" fill="none" />
+                                    <!-- Headlights (Detailed) -->
+                                    <path d="M18,90 L55,95 L50,80 L20,85 Z" class="car-light" />
+                                    <path d="M182,90 L145,95 L150,80 L180,85 Z" class="car-light" />
+                                    <!-- Grille & Emblem area -->
+                                    <path d="M60,123 L140,123 L135,138 L65,138 Z" fill="none" stroke="#444"
+                                        stroke-width="1.5" />
+                                    <circle cx="100" cy="115" r="3" fill="#888" />
+                                    <!-- Bumper -->
+                                    <path d="M25,138 Q100,143 175,138" stroke="#333" stroke-width="2" fill="none"
                                         opacity="0.5" />
                                 </g>
 
                                 <!-- REAR VIEW (Top Right) -->
                                 <g transform="translate(450, 40)">
                                     <text x="100" y="-15" class="label-text" text-anchor="middle">TRASERA</text>
+                                    <!-- Tires -->
+                                    <rect x="0" y="90" width="15" height="40" rx="4" fill="#333" />
+                                    <rect x="185" y="90" width="15" height="40" rx="4" fill="#333" />
                                     <!-- Silhouette -->
                                     <path
                                         d="M15,80 Q15,30 100,30 Q185,30 185,80 L180,130 Q180,145 100,145 Q20,145 20,130 Z"
                                         class="car-body" />
                                     <!-- Rear Window -->
-                                    <path d="M35,70 L165,70 L155,40 Q100,35 45,40 Z" class="car-window" />
-                                    <!-- Trunk Line -->
-                                    <path d="M25,85 L175,85" class="car-line" opacity="0.3" fill="none" />
-                                    <!-- Tail Lights (Modern Bar or L-shape) -->
-                                    <path d="M20,95 L65,95 L60,110 L20,105 Z" class="car-taillight" />
-                                    <path d="M180,95 L135,95 L140,110 L180,105 Z" class="car-taillight" />
+                                    <path d="M35,70 L165,70 L155,35 Q100,30 45,35 Z" class="car-window" />
+                                    <!-- Trunk Lid Area (Distinct) -->
+                                    <path d="M30,85 L170,85 Q165,120 160,125 L40,125 Q35,120 30,85 Z" class="car-body"
+                                        fill="#fff" opacity="0.1" stroke="#ccc" stroke-width="1" />
+                                    <!-- Tail Lights -->
+                                    <path d="M20,90 L65,90 L60,105 L20,100 Z" class="car-taillight" />
+                                    <path d="M180,90 L135,90 L140,105 L180,100 Z" class="car-taillight" />
                                     <!-- Plate Area -->
-                                    <rect x="80" y="105" width="40" height="15" fill="#f0f0f0" stroke="#ccc" />
-                                    <!-- Bumper -->
+                                    <rect x="80" y="100" width="40" height="15" fill="#f0f0f0" stroke="#ccc" />
+                                    <!-- Bumper & Exhaust -->
                                     <path d="M25,135 L175,135" stroke="#333" stroke-width="3" opacity="0.3" />
-                                    <circle cx="40" cy="138" r="3" fill="#555" title="Escape" />
+                                    <circle cx="45" cy="138" r="4" fill="#555" title="Escape" />
                                 </g>
 
                                 <!-- LEFT SIDE (Bottom Left) -->
