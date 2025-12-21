@@ -96,14 +96,9 @@ const app = {
         text += `📅 *Entrega Aprox:* ${date}\n\n`;
         text += `Tu vehículo está en buenas manos. Adjunto encontrarás la constancia detallada.`;
 
-        // Intentar compartir con imagen (Móvil)
-        if (navigator.share) {
-            app.processCapture(data, 'share', null, text);
-        } else {
-            // Fallback Desktop
-            const url = `https://wa.me/57${phone}?text=${encodeURIComponent(text)}`;
-            window.open(url, '_blank');
-        }
+        // Usamos el flujo directo: Descargar Imagen -> Abrir WhatsApp con número
+        // Esto garantiza que se abra el chat del número específico, aunque la imagen deba adjuntarse manual.
+        app.processCapture(data, 'whatsapp_direct', null, text);
     },
 
     // Real Auth Login
@@ -818,6 +813,20 @@ const app = {
                             downloadImage();
                         }
                     }
+                } else if (action === 'whatsapp_direct') {
+                    // 1. Descargar Imagen siempre
+                    downloadImage();
+                    app.toast("✅ Imagen descargada. Adjúntala en el chat.", "success");
+
+                    // 2. Abrir WhatsApp Directo (con delay para permitir descarga)
+                    const phone = (orderData.cliente_telefono || '').replace(/\D/g, '');
+                    if (phone) {
+                        const waUrl = `https://wa.me/57${phone}?text=${encodeURIComponent(customText || '')}`;
+                        setTimeout(() => window.open(waUrl, '_blank'), 1000);
+                    } else {
+                        app.toast("Error: No hay teléfono para WhatsApp", "warning");
+                    }
+
                 } else {
                     // Si es download o no soporta share
                     downloadImage();
