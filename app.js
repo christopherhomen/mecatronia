@@ -817,13 +817,24 @@ const app = {
                     // 1. Descargar (Backup)
                     downloadImage();
 
-                    // 2. Intentar Copiar Imagen para pegar directo (Android/iOS 123+)
+                    // 2. Intentar Copiar Imagen (y Texto si es posible)
                     try {
-                        // Intentar escribir Blob en portapapeles
                         if (typeof ClipboardItem !== "undefined") {
-                            const clipboardData = [new ClipboardItem({ [blob.type]: blob })];
-                            await navigator.clipboard.write(clipboardData);
-                            app.toast("📋 Imagen COPIADA al portapapeles.\n¡Mantén pulsado y PÉGALA!", "success");
+                            // Intentar Copia Mixta (Texto + Imagen)
+                            try {
+                                const textBlob = new Blob([customText || ""], { type: 'text/plain' });
+                                const mixedItem = new ClipboardItem({
+                                    [blob.type]: blob,
+                                    'text/plain': textBlob
+                                });
+                                await navigator.clipboard.write([mixedItem]);
+                                app.toast("📋 Imagen y Texto COPIADOS.\n¡Pégalos en el chat!", "success");
+                            } catch (mixedErr) {
+                                // Fallback: Solo Imagen (Común en móviles)
+                                const imgItem = new ClipboardItem({ [blob.type]: blob });
+                                await navigator.clipboard.write([imgItem]);
+                                app.toast("📋 Imagen COPIADA.\n¡Pégala en el chat!", "success");
+                            }
                         } else {
                             app.toast("✅ Imagen descargada.\nAdjúntala con el clip 📎", "success");
                         }
