@@ -784,7 +784,7 @@ const app = {
 
             // 2. Capture (High Quality for HD)
             const canvas = await html2canvas(captureContainer, {
-                scale: 3, // Higher resolution for "HD" support
+                scale: 4, // Higher resolution for "HD" support
                 useCORS: true,
                 allowTaint: false
             });
@@ -801,7 +801,7 @@ const app = {
                 const downloadImage = () => {
                     const link = document.createElement('a');
                     link.download = fileName;
-                    link.href = canvas.toDataURL('image/jpeg', 0.95);
+                    link.href = canvas.toDataURL('image/jpeg', 0.98);
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
@@ -877,7 +877,7 @@ const app = {
                     // Si es download o no soporta share
                     downloadImage();
                 }
-            }, 'image/jpeg', 0.95);
+            }, 'image/jpeg', 0.98);
 
         } catch (e) {
             console.error(e);
