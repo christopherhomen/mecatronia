@@ -646,13 +646,18 @@ const app = {
     renderMarkers: () => {
         const l = document.getElementById('damage-markers-layer');
         l.innerHTML = '';
-        const sym = { 'rayon': '➖', 'golpe': '❌', 'sumidura': '🟠' };
+        const sym = { 'rayon': '➖', 'golpe': '✖', 'sumidura': '🟠' };
         app.damageMarkers.forEach(m => {
             const d = document.createElement('div');
             d.className = 'marker-spot';
             d.style.left = m.x + '%';
             d.style.top = m.y + '%';
             d.innerText = sym[m.type];
+            if (m.type === 'golpe') {
+                d.style.color = '#aa00ff';
+                d.style.fontWeight = 'bold';
+                d.style.textShadow = '0px 0px 2px white';
+            }
             l.appendChild(d);
         });
     },
@@ -725,7 +730,7 @@ const app = {
             }
 
             // Render markers on clone
-            const sym = { 'rayon': '➖', 'golpe': '❌', 'sumidura': '🟠' };
+            const sym = { 'rayon': '➖', 'golpe': '✖', 'sumidura': '🟠' };
             (orderData.damages || []).forEach(m => {
                 const d = document.createElement('div');
                 d.style.position = 'absolute';
@@ -734,6 +739,11 @@ const app = {
                 d.style.transform = 'translate(-50%, -50%)';
                 d.style.fontSize = '20px';
                 d.innerText = sym[m.type];
+                if (m.type === 'golpe') {
+                    d.style.color = '#aa00ff';
+                    d.style.fontWeight = 'bold';
+                    d.style.textShadow = '0px 0px 2px white';
+                }
                 host.appendChild(d);
             });
 
