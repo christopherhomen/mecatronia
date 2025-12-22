@@ -453,6 +453,10 @@
                 <!-- Actions -->
                 <div class="form-actions sticky-footer">
                     <button type="button" class="btn-cancel" onclick="app.navigateTo('dashboard')">Cancelar</button>
+                    <button type="button" id="btn-delete" class="btn-cancel"
+                        style="display:none; background-color: #d32f2f; color: white;" onclick="app.deleteOrder()">
+                        <span class="material-symbols-outlined">delete</span> Eliminar
+                    </button>
                     <!-- WhatsApp Direct -->
                     <button type="button" class="btn-whatsapp" onclick="app.sendWhatsApp()">
                         <span class="material-symbols-outlined">chat</span> WhatsApp
