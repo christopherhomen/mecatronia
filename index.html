@@ -451,32 +451,41 @@
 
                 <!-- Actions -->
                 <!-- Actions -->
-                <div class="form-actions sticky-footer">
-                    <button type="button" class="btn-cancel"
-                        style="display: flex; justify-content: center; align-items: center;"
-                        onclick="app.navigateTo('dashboard')">Cancelar</button>
-                    <button type="button" id="btn-delete" class="btn-cancel"
-                        style="display:none; background-color: #d32f2f; color: white; justify-content: center; align-items: center; gap: 6px;"
-                        onclick="app.deleteOrder()">
-                        <span class="material-symbols-outlined">delete</span> Eliminar
-                    </button>
-                    <!-- WhatsApp Direct -->
+                <div class="form-actions sticky-footer"
+                    style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px; background: #fff; border-top: 1px solid #ddd; z-index: 100;">
+
+                    <!-- Row 1: WhatsApp + Img -->
                     <button type="button" class="btn-whatsapp"
                         style="display: flex; justify-content: center; align-items: center; gap: 8px;"
                         onclick="app.sendWhatsApp()">
                         <span class="material-symbols-outlined">chat</span> WhatsApp
                     </button>
-                    <!-- Buttons for Image -->
                     <button type="button" id="btn-download" class="btn-secondary"
-                        style="display:none; justify-content: center; align-items: center; gap: 5px;">
+                        style="display:none; justify-content: center; align-items: center; gap: 5px;"
+                        onclick="app.processCapture(app.getFormData(), 'download', this)">
                         <span class="material-symbols-outlined">download</span> Img
                     </button>
+
+                    <!-- Row 2: Enviar + Cancelar -->
                     <button type="button" id="btn-share" class="btn-secondary"
-                        style="display:none; justify-content: center; align-items: center; gap: 5px;">
+                        style="display:none; justify-content: center; align-items: center; gap: 5px;"
+                        onclick="app.processCapture(app.getFormData(), 'share', this)">
                         <span class="material-symbols-outlined">share</span> Enviar
                     </button>
+                    <button type="button" class="btn-cancel"
+                        style="display: flex; justify-content: center; align-items: center;"
+                        onclick="app.navigateTo('dashboard')">Cancelar</button>
+
+                    <!-- Row 3: Eliminar (Full) -->
+                    <button type="button" id="btn-delete" class="btn-cancel"
+                        style="display:none; background-color: #d32f2f; color: white; justify-content: center; align-items: center; gap: 6px; grid-column: 1 / -1;"
+                        onclick="app.deleteOrder()">
+                        <span class="material-symbols-outlined">delete</span> Eliminar
+                    </button>
+
+                    <!-- Row 4: Guardar (Full) -->
                     <button type="submit" class="btn-save"
-                        style="display: flex; justify-content: center; align-items: center; gap: 8px;">
+                        style="display: flex; justify-content: center; align-items: center; gap: 8px; grid-column: 1 / -1; width: 100%;">
                         <span class="material-symbols-outlined">save</span> Guardar Orden
                     </button>
                 </div>
