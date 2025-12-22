@@ -96,9 +96,15 @@ const app = {
         text += `📅 *Entrega Aprox:* ${date}\n\n`;
         text += `Tu vehículo está en buenas manos. Adjunto encontrarás la constancia detallada.`;
 
-        // Usuario exigió ir directo al número.
-        // Solución técnica: Descargar/Copiar imagen y abrir chat directo.
-        app.processCapture(data, 'whatsapp_direct', null, text);
+        // Método Robusto: Navigator.Share (Menú compartir sistema)
+        // Es el único que soporta enviar Imagen + Texto fiablemente, aunque requiera elegir contacto.
+        if (navigator.share) {
+            app.processCapture(data, 'share', null, text);
+        } else {
+            // PC: Link directo
+            const url = `https://wa.me/57${phone}?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+        }
     },
 
     // Real Auth Login
