@@ -20,4 +20,7 @@ ALTER TABLE orders ADD COLUMN IF NOT EXISTS vehiculo_km text;
 -- 3. EL NUEVO: Fecha Estimada de Entrega
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS fecha_entrega text;
 
+-- 4. Convertir Orden Numero a Texto (Para formato MECA-XXXX)
+ALTER TABLE orders ALTER COLUMN orden_numero TYPE text;
+
 SELECT 'Listo. Todo actualizado sin errores.' as mensaje;

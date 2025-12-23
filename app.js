@@ -345,6 +345,34 @@ const app = {
         });
     },
 
+    generateOrderNumber: async () => {
+        const now = new Date();
+        const y = now.getFullYear().toString().slice(-2);
+        const m = String(now.getMonth() + 1).padStart(2, '0');
+        const d = String(now.getDate()).padStart(2, '0');
+        const prefix = `MECA-${y}${m}${d}-`;
+
+        // 1. Obtener todas las órdenes para calcular el secuencial del día
+        const allOrders = await app.getAll();
+        const todayOrders = allOrders.filter(o =>
+            o.orden_numero && o.orden_numero.toString().startsWith(prefix)
+        );
+
+        let maxSeq = 0;
+        todayOrders.forEach(o => {
+            // Estructura esperada: MECA-YYMMDD-XXX
+            const parts = o.orden_numero.toString().split('-');
+            if (parts.length === 3) {
+                const seq = parseInt(parts[2]);
+                if (!isNaN(seq) && seq > maxSeq) maxSeq = seq;
+            }
+        });
+
+        // 2. Generar siguiente (001, 002...)
+        const nextSeq = String(maxSeq + 1).padStart(3, '0');
+        return `${prefix}${nextSeq}`;
+    },
+
     // --- INTERFAZ ---
     setupEventListeners: () => {
         // Busqueda
@@ -393,7 +421,13 @@ const app = {
         if (btnDashboard) btnDashboard.onclick = () => app.navigateTo('dashboard');
 
         const btnNew = document.getElementById('btn-new');
-        if (btnNew) btnNew.onclick = () => { app.resetForm(); app.navigateTo('new'); };
+        if (btnNew) btnNew.onclick = async () => {
+            app.resetForm();
+            // Generar ID Automático
+            const newId = await app.generateOrderNumber();
+            document.getElementById('orden_numero').value = newId;
+            app.navigateTo('new');
+        };
 
         const btnBackForm = document.getElementById('btn-back-form');
         if (btnBackForm) btnBackForm.onclick = () => app.navigateTo('dashboard');
