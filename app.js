@@ -16,6 +16,7 @@ const app = {
     supabase: null,
     currentDamageType: 'rayon',
     damageMarkers: [],
+    selectedMarkerIndex: null,
     togglePassword: () => {
         const input = document.getElementById('login-pass');
         const icon = document.getElementById('pass-icon');
@@ -399,10 +400,14 @@ const app = {
 
         // Daños
         const diagramWrapper = document.getElementById('car-diagram-wrapper');
-        if (diagramWrapper) diagramWrapper.onclick = app.handleDiagram;
+        if (diagramWrapper) {
+            diagramWrapper.onpointerdown = app.handleDiagramStart;
+            // Prevent context menu on right click/long press for better drawing experience
+            diagramWrapper.oncontextmenu = (e) => e.preventDefault();
+        }
 
-        const btnClearDamage = document.getElementById('btn-clear-damage');
-        if (btnClearDamage) btnClearDamage.onclick = () => { app.damageMarkers.pop(); app.renderMarkers(); };
+        // const btnClearDamage = document.getElementById('btn-clear-damage');
+        // if (btnClearDamage) btnClearDamage.onclick = () => { app.damageMarkers.pop(); app.renderMarkers(); };
 
         document.querySelectorAll('input[name="damage_type"]').forEach(r => r.onchange = (e) => app.currentDamageType = e.target.value);
 
@@ -637,27 +642,185 @@ const app = {
         }
     },
 
-    handleDiagram: (e) => {
+    handleDiagramStart: (e) => {
         if (e.target.closest('.damage-controls')) return;
+        e.preventDefault(); // Stop scrolling/dragging
+
         const rect = e.currentTarget.getBoundingClientRect();
+
+        // Coords
+        const startX = e.clientX;
+        const startY = e.clientY;
+
+        // Add new marker (Default state)
         app.damageMarkers.push({
-            x: ((e.clientX - rect.left) / rect.width) * 100,
-            y: ((e.clientY - rect.top) / rect.height) * 100,
-            type: app.currentDamageType
+            x: ((startX - rect.left) / rect.width) * 100,
+            y: ((startY - rect.top) / rect.height) * 100,
+            type: app.currentDamageType,
+            rotation: 0,
+            scale: 1.0
         });
+
+        const newIndex = app.damageMarkers.length - 1;
+
+        // Select it immediately
+        app.selectMarker(newIndex);
+
+        // Setup Drag Interaction
+        app.interactionState = {
+            index: newIndex,
+            startX: startX,
+            startY: startY
+        };
+
+        document.addEventListener('pointermove', app.handleDiagramMove);
+        document.addEventListener('pointerup', app.handleDiagramEnd);
+    },
+
+    handleDiagramMove: (e) => {
+        if (!app.interactionState) return;
+        e.preventDefault();
+
+        const { startX, startY, index } = app.interactionState;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        // Threshold to interpret as drag
+        if (dist < 10) return;
+
+        const m = app.damageMarkers[index];
+        if (!m) return;
+
+        // 1. Rotation: Angle of the drag vector
+        m.rotation = Math.atan2(dy, dx) * (180 / Math.PI);
+
+        // 2. Scale: Distance correlates to size
+        // Base 1.0, grow faster for scratches
+        let newScale = 0.5 + (dist / 40);
+        m.scale = Math.max(0.5, Math.min(8.0, newScale));
+
+        // Update View
         app.renderMarkers();
+
+        // Update Sliders if they exist
+        const inpRot = document.getElementById('inp-rot');
+        const listRot = document.getElementById('val-rot');
+        if (inpRot) inpRot.value = m.rotation; // Slider might need 0-360 normalization if restricted
+        if (listRot) listRot.innerText = Math.round(m.rotation) + '°';
+
+        const inpScale = document.getElementById('inp-scale');
+        const listScale = document.getElementById('val-scale');
+        if (inpScale) inpScale.value = m.scale;
+        if (listScale) listScale.innerText = m.scale.toFixed(1) + 'x';
+    },
+
+    handleDiagramEnd: (e) => {
+        document.removeEventListener('pointermove', app.handleDiagramMove);
+        document.removeEventListener('pointerup', app.handleDiagramEnd);
+        app.interactionState = null;
+    },
+
+    // --- Marker Manipulation Helpers ---
+    selectMarker: (index, e) => {
+        if (e) e.stopPropagation(); // Prevent adding a new marker when clicking an existing one
+        app.selectedMarkerIndex = index;
+        app.renderMarkers();
+
+        // Update Controls UI
+        const m = app.damageMarkers[index];
+        const controls = document.getElementById('marker-controls');
+        if (controls && m) {
+            controls.style.display = 'block';
+            document.getElementById('inp-rot').value = m.rotation || 0;
+            document.getElementById('val-rot').innerText = (m.rotation || 0) + '°';
+            document.getElementById('inp-scale').value = m.scale || 1.0;
+            document.getElementById('val-scale').innerText = (m.scale || 1.0) + 'x';
+        }
+    },
+
+    deselectMarker: () => {
+        app.selectedMarkerIndex = null;
+        app.renderMarkers();
+        const controls = document.getElementById('marker-controls');
+        if (controls) controls.style.display = 'none';
+    },
+
+    updateMarker: (prop, value) => {
+        if (app.selectedMarkerIndex === null) return;
+        const m = app.damageMarkers[app.selectedMarkerIndex];
+        if (!m) return;
+
+        if (prop === 'rotation') {
+            m.rotation = parseInt(value);
+            document.getElementById('val-rot').innerText = m.rotation + '°';
+        } else if (prop === 'scale') {
+            m.scale = parseFloat(value);
+            document.getElementById('val-scale').innerText = m.scale + 'x';
+        }
+        app.renderMarkers();
+    },
+
+    deleteSelectedMarker: () => {
+        if (app.selectedMarkerIndex === null) return;
+        app.damageMarkers.splice(app.selectedMarkerIndex, 1);
+        app.deselectMarker();
+    },
+
+    undoLastMarker: () => {
+        app.damageMarkers.pop();
+        app.deselectMarker();
     },
 
     renderMarkers: () => {
         const l = document.getElementById('damage-markers-layer');
         l.innerHTML = '';
         const sym = { 'rayon': '➖', 'golpe': '✖', 'sumidura': '🟠' };
-        app.damageMarkers.forEach(m => {
+
+        app.damageMarkers.forEach((m, i) => {
             const d = document.createElement('div');
             d.className = 'marker-spot';
             d.style.left = m.x + '%';
             d.style.top = m.y + '%';
             d.innerText = sym[m.type];
+
+            // Apply Transform (Rotation & Scale)
+            const rot = m.rotation || 0;
+            const sc = m.scale || 1.0;
+
+            // For 'rayon', stretch length (X) but keep thickness (Y) fixed.
+            // For others, scale uniformly.
+            if (m.type === 'rayon') {
+                d.style.transform = `translate(-50%, -50%) rotate(${rot}deg) scale(${sc}, 1)`;
+            } else {
+                d.style.transform = `translate(-50%, -50%) rotate(${rot}deg) scale(${sc})`;
+            }
+
+            // Visual Selection Highlight
+            if (i === app.selectedMarkerIndex) {
+                d.style.border = '2px dashed #000';
+                d.style.borderRadius = '50%';
+                d.style.boxShadow = '0 0 5px rgba(255, 255, 0, 0.8)';
+                d.style.zIndex = 100;
+                d.style.animation = 'none'; // Prevent pop-in animation while editing
+            }
+
+            // Click/Drag to Select & Edit
+            d.onpointerdown = (e) => {
+                e.preventDefault();
+                e.stopPropagation(); // Stop parent from creating new marker
+                app.selectMarker(i);
+
+                // Enable "Edit Mode" via Dragging immediately
+                app.interactionState = {
+                    index: i,
+                    startX: e.clientX,
+                    startY: e.clientY
+                };
+                document.addEventListener('pointermove', app.handleDiagramMove);
+                document.addEventListener('pointerup', app.handleDiagramEnd);
+            };
+
             if (m.type === 'golpe') {
                 d.style.color = '#aa00ff';
                 d.style.fontWeight = 'bold';
@@ -741,7 +904,14 @@ const app = {
                 d.style.position = 'absolute';
                 d.style.left = m.x + '%';
                 d.style.top = m.y + '%';
-                d.style.transform = 'translate(-50%, -50%)';
+
+                // MIRROR RENDER LOGIC for Capture
+                if (m.type === 'rayon') {
+                    d.style.transform = `translate(-50%, -50%) rotate(${m.rotation || 0}deg) scale(${m.scale || 1}, 1)`;
+                } else {
+                    d.style.transform = `translate(-50%, -50%) rotate(${m.rotation || 0}deg) scale(${m.scale || 1})`;
+                }
+
                 d.style.fontSize = '20px';
                 d.innerText = sym[m.type];
                 if (m.type === 'golpe') {
@@ -763,30 +933,44 @@ const app = {
                 sigImg.style.display = 'none';
             }
 
-            // LOGO SAFETY CHECK
-            // Si estamos en file:// el logo manchará el canvas.
-            // Tratamos de ocultarlo si detectamos que no es seguro.
+            // CANVAS SAFETY CHECK (Global)
+            // Verify all images in the container. If any are tainted (file://), hide them to prevent crash.
             const captureContainer = document.getElementById('capture-container');
-            const logoImg = captureContainer.querySelector('img');
+            const allImages = captureContainer.querySelectorAll('img');
 
-            // Intentar detectar si podemos leer la imagen
-            try {
-                const testC = document.createElement('canvas');
-                const ctx = testC.getContext('2d');
-                testC.width = 1; testC.height = 1;
-                // Si esto falla o el toDataURL falla, entonces ocultamos logo
-                ctx.drawImage(logoImg, 0, 0);
-                testC.toDataURL();
-            } catch (securityError) {
-                console.warn("Imagen local detectada en modo restringido. Ocultando logo para permitir captura.");
-                logoImg.style.display = 'none';
+            for (let img of allImages) {
+                try {
+                    // If image is hidden or no src, skip
+                    if (img.style.display === 'none' || !img.src) continue;
+
+                    const testC = document.createElement('canvas');
+                    const ctx = testC.getContext('2d');
+                    testC.width = 1; testC.height = 1;
+
+                    // Attempt to draw and read. If it throws, it's tainted.
+                    ctx.drawImage(img, 0, 0);
+                    testC.toDataURL();
+                } catch (securityError) {
+                    console.warn("Imagen insegura detectada (CORS/File). Ocultando para permitir captura:", img.src);
+                    img.style.display = 'none';
+
+                    // Add a text placeholder so they know why it's missing
+                    const placeholder = document.createElement('div');
+                    placeholder.innerText = "[Imagen bloqueada por navegador - use Servidor Local]";
+                    placeholder.style.color = 'red';
+                    placeholder.style.fontSize = '10px';
+                    placeholder.style.textAlign = 'center';
+                    placeholder.style.border = '1px dashed red';
+                    img.parentElement.insertBefore(placeholder, img);
+                }
             }
 
             // 2. Capture (High Quality for HD)
             const canvas = await html2canvas(captureContainer, {
                 scale: 4, // Higher resolution for "HD" support
                 useCORS: true,
-                allowTaint: false
+                allowTaint: false, // CRITICAL: Must be false to allow toBlob export
+                backgroundColor: '#ffffff'
             });
 
             // 3. Share or Download Choice

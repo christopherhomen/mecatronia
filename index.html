@@ -367,8 +367,8 @@
                         <div class="damage-inspector-container">
                             <div id="car-diagram-wrapper" style="position: relative;">
                                 <!-- Image Diagram: Optimized PNG -->
-                                <img src="vistas.PNG" id="car-image" alt="Esquema del Vehículo"
-                                    style="width: 100%; height: auto; display: block; border-radius: 8px;">
+                                <img src="vistas.PNG" id="car-image" alt="Esquema del Vehículo" draggable="false"
+                                    style="width: 100%; height: auto; display: block; border-radius: 8px; user-select: none; pointer-events: none; -webkit-user-drag: none;">
 
                                 <!-- Markers Layer -->
                                 <div id="damage-markers-layer"></div>
@@ -387,8 +387,44 @@
                                             class="badge blue">🟠
                                             Sumidura</span></label>
                                 </div>
-                                <button type="button" id="btn-clear-damage" class="btn-secondary small">Borrar
-                                    último</button>
+
+                                <button type="button" id="btn-clear-damage" class="btn-secondary small"
+                                    onclick="app.undoLastMarker()">Borrar último</button>
+
+                                <!-- NEW: Marker Controls -->
+                                <div id="marker-controls"
+                                    style="width: 100%; border-top: 1px solid #ccc; margin-top: 10px; padding-top: 10px; display: none;">
+                                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                                        <div style="flex: 1; min-width: 120px;">
+                                            <label
+                                                style="font-size: 0.8rem; display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                                <span>Rotación</span>
+                                                <b id="val-rot">0°</b>
+                                            </label>
+                                            <input type="range" id="inp-rot" min="0" max="180" value="0"
+                                                style="width: 100%; cursor: pointer;"
+                                                oninput="app.updateMarker('rotation', this.value)">
+                                        </div>
+                                        <div style="flex: 1; min-width: 120px;">
+                                            <label
+                                                style="font-size: 0.8rem; display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                                <span>Tamaño</span>
+                                                <b id="val-scale">1.0</b>
+                                            </label>
+                                            <input type="range" id="inp-scale" min="0.5" max="3.0" step="0.1"
+                                                value="1.0" style="width: 100%; cursor: pointer;"
+                                                oninput="app.updateMarker('scale', this.value)">
+                                        </div>
+                                    </div>
+                                    <div style="margin-top: 10px; display: flex; gap: 10px;">
+                                        <button type="button" class="btn-secondary small"
+                                            style="flex: 1; background: #555;" onclick="app.deselectMarker()">Terminar
+                                            Edición</button>
+                                        <button type="button" class="btn-secondary small"
+                                            style="flex: 1; background: var(--danger); color: white;"
+                                            onclick="app.deleteSelectedMarker()">Eliminar Marca</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
