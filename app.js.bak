@@ -888,15 +888,7 @@ const app = {
             document.getElementById('cap-placa').innerText = orderData.vehiculo_placa;
             document.getElementById('cap-km').innerText = orderData.vehiculo_km || '0';
             document.getElementById('cap-tipo').innerText = orderData.vehiculo_tipo || 'N/A';
-            // Fuel Bar Logic
-            const fuelVal = orderData.vehiculo_combustible || 0;
-            document.getElementById('cap-gas-text').innerText = fuelVal + '%';
-            const fuelBar = document.getElementById('cap-gas-bar');
-            if (fuelBar) {
-                fuelBar.style.width = fuelVal + '%';
-                // Color dinámico (Rojo si vacío, Verde si lleno... o siempre Naranja marca)
-                fuelBar.style.backgroundColor = fuelVal < 25 ? '#d32f2f' : '#FF8800';
-            }
+            document.getElementById('cap-gas').innerText = (orderData.vehiculo_combustible || 0) + '%';
 
             // Inventory
             const invDiv = document.getElementById('cap-inventory');
