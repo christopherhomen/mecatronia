@@ -365,10 +365,19 @@ h3 {
 
 label {
     display: block;
-    margin-bottom: 6px;
-    font-size: 0.85rem;
-    color: var(--color-text-muted);
-    font-weight: 500;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: #e0e0e0;
+    /* Brighter for readability */
+    font-weight: 600;
+    /* Semi-bold */
+    letter-spacing: 0.3px;
+}
+
+/* Explicit Black for Damage Controls Title */
+.damage-controls p,
+.damage-controls strong {
+    color: #000 !important;
 }
 
 .large-input {
