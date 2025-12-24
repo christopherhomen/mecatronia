@@ -898,19 +898,41 @@ const app = {
                 fuelBar.style.backgroundColor = fuelVal < 25 ? '#d32f2f' : '#FF8800';
             }
 
-            // Inventory
+            // Inventory Premium Grid
             const invDiv = document.getElementById('cap-inventory');
             invDiv.innerHTML = '';
+            // Ajustar grid: 3 columnas para que se vea ordenado
+            invDiv.style.display = 'grid';
+            invDiv.style.gridTemplateColumns = 'repeat(3, 1fr)';
+            invDiv.style.gap = '8px';
+
             const invKeys = Object.keys(orderData).filter(k => k.startsWith('inv_') && orderData[k]);
-            if (invKeys.length === 0) invDiv.innerText = "Ninguno";
-            else invKeys.forEach(k => {
-                const span = document.createElement('span');
-                span.style.border = "1px solid #ccc";
-                span.style.padding = "2px 6px";
-                span.style.borderRadius = "4px";
-                span.innerText = k.replace('inv_', '').toUpperCase();
-                invDiv.appendChild(span);
-            });
+
+            if (invKeys.length === 0) {
+                invDiv.style.display = 'block'; // Volver a bloque para mensaje
+                invDiv.innerHTML = '<p style="color:#999; font-style:italic; text-align:center;">No se registraron elementos de inventario.</p>';
+            } else {
+                invKeys.forEach(k => {
+                    const label = k.replace('inv_', '').replace('_', ' ').toUpperCase();
+
+                    const card = document.createElement('div');
+                    // Estilo TIPO "Checklist Card"
+                    card.style.display = 'flex';
+                    card.style.alignItems = 'center';
+                    card.style.gap = '6px';
+                    card.style.background = '#f0fff4'; // Fondo verde muy claro
+                    card.style.border = '1px solid #c6f6d5'; // Borde verde suave
+                    card.style.borderRadius = '5px';
+                    card.style.padding = '4px 8px';
+                    card.style.fontSize = '0.75rem';
+                    card.style.color = '#2f855a'; // Texto verde oscuro
+
+                    // Icono Check
+                    card.innerHTML = `<span style="font-weight:bold; font-size:1.1em;">✔</span> <span>${label}</span>`;
+
+                    invDiv.appendChild(card);
+                });
+            }
 
             // Pertenencias
             document.getElementById('cap-pertenencias').innerText = orderData.obj_pertenencias || "Ninguna";
