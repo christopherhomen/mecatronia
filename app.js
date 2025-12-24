@@ -594,7 +594,7 @@ const app = {
             btnW.title = "Enviar por WhatsApp";
             btnW.onclick = (e) => {
                 e.stopPropagation();
-                app.processCapture(od, 'whatsapp', btnW);
+                app.processCapture(od, 'whatsapp_direct', btnW);
             };
             actionsDiv.appendChild(btnW);
 
