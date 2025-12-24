@@ -1,0 +1,777 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MecaTronia - Taller Digital</title>
+    <!-- Social Sharing (Open Graph) -->
+    <meta property="og:title" content="MecaTronia - Taller Digital">
+    <meta property="og:description" content="Gestión profesional de servicios automotrices.">
+    <meta property="og:url" content="https://mecatronia.vercel.app/">
+    <meta property="og:image" content="https://mecatronia.vercel.app/logo.PNG">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="MecaTronia - Taller Digital">
+    <meta name="twitter:description" content="Gestión profesional de servicios automotrices.">
+    <meta name="twitter:image" content="https://mecatronia.vercel.app/logo.PNG">
+
+    <!-- Favicon & Icons -->
+    <link rel="icon" type="image/png" href="logo.PNG">
+    <link rel="apple-touch-icon" href="logo.PNG">
+
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="sync-styles.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a1a1a">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;700&display=swap"
+        rel="stylesheet">
+    <!-- Google Icons -->
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <!-- Supabase Library for Cloud Sync -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- HTML2Canvas for Screenshots -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Toastify for Notifications -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+</head>
+
+<body>
+    <!-- Login Screen (Supabase Auth) -->
+    <div id="login-screen">
+        <div class="login-box">
+            <img src="logo.PNG" style="width: 80px; margin-bottom: 20px;">
+            <p><strong>Acceso MecaTronia</strong></p>
+            <p style="font-size: 0.8rem; color: #ccc; margin-bottom: 15px;">Ingresa tus credenciales de administrador
+            </p>
+
+            <input type="email" id="login-email" placeholder="correo@ejemplo.com" style="background:#444; color:white;"
+                onkeydown="if(event.key === 'Enter') app.login()">
+
+            <div style="position: relative;">
+                <input type="password" id="login-pass" placeholder="Contraseña"
+                    style="background:#444; color:white; padding-right: 40px;"
+                    onkeydown="if(event.key === 'Enter') app.login()">
+                <span id="pass-icon" class="material-symbols-outlined" onclick="app.togglePassword()"
+                    style="position: absolute; right: 10px; top: 12px; color: #aaa; cursor: pointer; user-select: none;">
+                    visibility
+                </span>
+            </div>
+
+            <button onclick="app.login()" id="btn-login-action" style="margin-top: 10px;">Iniciar Sesión</button>
+
+            <p id="login-error" style="color: #ff6b6b; font-size: 0.8rem; display: none; margin-top: 10px;">Error de
+                autenticación</p>
+            <div id="login-loading" style="display:none; margin-top:10px;"><span class="loader"></span> Conectando...
+            </div>
+        </div>
+    </div>
+
+    <div id="app">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="brand">
+                <img src="logo.PNG" alt="ServiAuto Diesel" class="brand-logo">
+                <div id="sync-status" class="sync-badge offline" title="Estado de conexión">
+                    <span class="dot"></span> <span id="sync-text">Offline</span>
+                </div>
+            </div>
+            <div class="nav-links">
+                <button id="btn-dashboard" class="nav-btn active">Registros</button>
+                <button id="btn-new" class="nav-btn primary">+ Nuevo</button>
+                <button onclick="app.logout()" class="nav-btn" style="background:none; border:none; color:white;"
+                    title="Cerrar Sesión">
+                    <span class="material-symbols-outlined">logout</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- View: Dashboard (List of Orders) -->
+        <main id="view-dashboard" class="view active">
+            <header class="section-header">
+                <h1>Historial <span id="total-orders" style="font-size: 0.6em; color: var(--primary);">(0)</span>
+                    <button id="btn-sync-down" title="Descargar datos de la nube"
+                        style="background:none; border:none; font-size:0.8em; cursor:pointer;">🔄</button>
+                </h1>
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="Buscar por placa, cliente u orden...">
+                </div>
+            </header>
+
+            <div id="orders-list" class="orders-grid">
+                <!-- Orders will be injected here via JS -->
+                <div class="empty-state">
+                    <p>No hay vehículos registrados.</p>
+                    <button class="btn-text" onclick="app.navigateTo('new')">Crear el
+                        primero</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- View: New Order Form -->
+        <main id="view-form" class="view hidden">
+            <header class="form-header">
+                <button class="btn-back" id="btn-back-form">← Volver</button>
+                <h1>Nueva Orden de Servicio</h1>
+            </header>
+
+            <form id="vehicle-form">
+                <input type="hidden" name="id" id="order_id">
+                <!-- 1. Header Info -->
+                <div class="card form-section active accordion">
+                    <div class="accordion-header" onclick="app.toggleAccordion(this)">
+                        <h2>Datos Generales</h2>
+                        <span class="material-symbols-outlined arrow">expand_more</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Orden de Trabajo #</label>
+                                <input type="text" name="orden_numero" id="orden_numero" required
+                                    placeholder="Autogenerado">
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha de Ingreso</label>
+                                <input type="datetime-local" name="fecha_apertura" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Profesional Operativo</label>
+                                <input type="text" name="asesor_servicio" placeholder="Nombre del Profesional">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Fecha Estimada Entrega <span style="color:var(--primary)">*</span></label>
+                                <input type="datetime-local" name="fecha_entrega">
+                                <small style="color: grey; font-size: 0.8rem; margin-top: 2px; display: block;">*
+                                    Sujeta a cambios / Puede variar</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Cliente y Vehículo (Do columnas en PC) -->
+                <div class="grid-2-col">
+                    <!-- Cliente -->
+                    <div class="card form-section">
+                        <h2>Información del Cliente</h2>
+                        <div class="form-group">
+                            <label>Nombre / Razón Social</label>
+                            <input type="text" name="cliente_nombre" required placeholder="Nombre completo">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>NIT / C.C.</label>
+                                <input type="text" name="cliente_id" placeholder="Documento ID">
+                            </div>
+                            <div class="form-group">
+                                <label>Teléfono</label>
+                                <input type="tel" name="cliente_telefono" placeholder="300 000 0000">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Dirección</label>
+                            <input type="text" name="cliente_direccion" placeholder="Calle...">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" name="cliente_email" placeholder="correo@ejemplo.com">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Asesor de Servicio</label>
+                                <input type="text" name="asesor_nombre">
+                            </div>
+                            <div class="form-group">
+                                <label>Tel. Asesor</label>
+                                <input type="tel" name="asesor_telefono">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vehículo -->
+                    <div class="card form-section">
+                        <h2>Información del Vehículo</h2>
+                        <div class="form-row">
+                            <div class="form-group highlight-group">
+                                <label>Placa</label>
+                                <input type="text" name="vehiculo_placa" class="large-input" required
+                                    placeholder="AAA-123">
+                            </div>
+                            <div class="form-group">
+                                <label>Kilometraje</label>
+                                <input type="number" name="vehiculo_km" placeholder="0">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Vehículo</label>
+                                <input type="text" name="vehiculo_tipo" placeholder="Ej: Camioneta">
+                            </div>
+                            <div class="form-group">
+                                <label>Modelo (Año)</label>
+                                <input type="number" name="vehiculo_anio" placeholder="2020">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Color</label>
+                                <input type="text" name="vehiculo_color">
+                            </div>
+                            <div class="form-group">
+                                <label>Rombo</label>
+                                <input type="text" name="vehiculo_rombo">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Chasis</label>
+                            <input type="text" name="vehiculo_chasis">
+                        </div>
+                        <div class="form-group">
+                            <label>Motor</label>
+                            <input type="text" name="vehiculo_motor">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Inventario (Checkboxes) -->
+                <div class="card form-section accordion">
+                    <div class="accordion-header" onclick="app.toggleAccordion(this)">
+                        <h2>Inventario y Combustible</h2>
+                        <span class="material-symbols-outlined arrow">expand_more</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="inventory-grid">
+                            <label class="checkbox-container">Antena
+                                <input type="checkbox" name="inv_antena">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="checkbox-container">Tapetes
+                                <input type="checkbox" name="inv_tapetes">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="checkbox-container">Herramientas
+                                <input type="checkbox" name="inv_herramientas">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="checkbox-container">Encendedor
+                                <input type="checkbox" name="inv_encendedor">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="checkbox-container">Radio
+                                <input type="checkbox" name="inv_radio">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="checkbox-container">Plumillas
+                                <input type="checkbox" name="inv_plumillas">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="checkbox-container">Llave Pernos
+                                <input type="checkbox" name="inv_llave_pernos">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="checkbox-container">Cubre Maletas
+                                <input type="checkbox" name="inv_cubre_maletas">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="checkbox-container">Copas
+                                <input type="checkbox" name="inv_copas">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="checkbox-container">Gato
+                                <input type="checkbox" name="inv_gato">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="checkbox-container">Emblemas
+                                <input type="checkbox" name="inv_emblemas">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="checkbox-container">Documentos
+                                <input type="checkbox" name="inv_documentos">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="checkbox-container">Parlantes
+                                <input type="checkbox" name="inv_parlantes">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="checkbox-container">Espejos
+                                <input type="checkbox" name="inv_espejos">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="checkbox-container">Llantas Repuesto
+                                <input type="checkbox" name="inv_llanta_repuesto">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="checkbox-container">Malla
+                                <input type="checkbox" name="inv_malla">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="checkbox-container">Eq. Carretera
+                                <input type="checkbox" name="inv_equipo">
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+
+                        <!-- Campo Nuevo: Pertenencias -->
+                        <div class="form-group" style="margin-top: 15px;">
+                            <label>Pertenencias / Objetos Personales</label>
+                            <textarea name="obj_pertenencias" rows="2"
+                                placeholder="Ej: Gafas de sol, Celular, Documentos en guantera..."></textarea>
+                        </div>
+
+                        <div class="fuel-section">
+                            <h3>Nivel de Combustible</h3>
+                            <div class="fuel-selector-group">
+                                <label class="fuel-option" title="Vacío">
+                                    <input type="radio" name="vehiculo_combustible" value="0">
+                                    <span class="fuel-box level-0">E</span>
+                                </label>
+                                <label class="fuel-option" title="1/4">
+                                    <input type="radio" name="vehiculo_combustible" value="25">
+                                    <span class="fuel-box level-25">1/4</span>
+                                </label>
+                                <label class="fuel-option" title="1/2">
+                                    <input type="radio" name="vehiculo_combustible" value="50">
+                                    <span class="fuel-box level-50">1/2</span>
+                                </label>
+                                <label class="fuel-option" title="3/4">
+                                    <input type="radio" name="vehiculo_combustible" value="75">
+                                    <span class="fuel-box level-75">3/4</span>
+                                </label>
+                                <label class="fuel-option" title="Lleno">
+                                    <input type="radio" name="vehiculo_combustible" value="100">
+                                    <span class="fuel-box level-100">F</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Inspección Visual (Diagrama) -->
+                <div class="card form-section accordion">
+                    <div class="accordion-header" onclick="app.toggleAccordion(this)">
+                        <h2>Inspección de Daños</h2>
+                        <span class="material-symbols-outlined arrow">expand_more</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p class="helper-text">Toque en el diagrama para marcar daños.</p>
+                        <div class="damage-inspector-container">
+                            <div id="car-diagram-wrapper" style="position: relative; touch-action: none;">
+                                <!-- Image Diagram: Optimized PNG -->
+                                <img src="vistas.PNG" id="car-image" alt="Esquema del Vehículo" draggable="false"
+                                    style="width: 100%; height: auto; display: block; border-radius: 8px; user-select: none; pointer-events: none; -webkit-user-drag: none;">
+
+                                <!-- Markers Layer -->
+                                <div id="damage-markers-layer"></div>
+                            </div>
+
+                            <div class="damage-controls">
+                                <p><strong>Tipo de daño:</strong></p>
+                                <div class="damage-type-selector">
+                                    <label><input type="radio" name="damage_type" value="rayon" checked> <span
+                                            class="badge yellow">➖
+                                            Rayón</span></label>
+                                    <label><input type="radio" name="damage_type" value="golpe">
+                                        <span class="badge" style="background-color: #aa00ff; color: white;">✖
+                                            Golpe</span></label>
+                                    <label><input type="radio" name="damage_type" value="sumidura"> <span
+                                            class="badge blue">🟠
+                                            Sumidura</span></label>
+                                </div>
+
+                                <button type="button" id="btn-clear-damage" class="btn-secondary small"
+                                    onclick="app.undoLastMarker()">Borrar último</button>
+
+                                <!-- NEW: Marker Controls -->
+                                <div id="marker-controls"
+                                    style="width: 100%; border-top: 1px solid #ccc; margin-top: 10px; padding-top: 10px; display: none;">
+                                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                                        <div style="flex: 1; min-width: 120px;">
+                                            <label
+                                                style="font-size: 0.8rem; display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                                <span>Rotación</span>
+                                                <b id="val-rot">0°</b>
+                                            </label>
+                                            <input type="range" id="inp-rot" min="0" max="180" value="0"
+                                                style="width: 100%; cursor: pointer;"
+                                                oninput="app.updateMarker('rotation', this.value)">
+                                        </div>
+                                        <div style="flex: 1; min-width: 120px;">
+                                            <label
+                                                style="font-size: 0.8rem; display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                                <span>Tamaño</span>
+                                                <b id="val-scale">1.0</b>
+                                            </label>
+                                            <input type="range" id="inp-scale" min="0.5" max="3.0" step="0.1"
+                                                value="1.0" style="width: 100%; cursor: pointer;"
+                                                oninput="app.updateMarker('scale', this.value)">
+                                        </div>
+                                    </div>
+                                    <div style="margin-top: 10px; display: flex; gap: 10px;">
+                                        <button type="button" class="btn-secondary small"
+                                            style="flex: 1; background: #555;" onclick="app.deselectMarker()">Terminar
+                                            Edición</button>
+                                        <button type="button" class="btn-secondary small"
+                                            style="flex: 1; background: var(--danger); color: white;"
+                                            onclick="app.deleteSelectedMarker()">Eliminar Marca</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Solicitud y Notas -->
+                <div class="card form-section accordion">
+                    <div class="accordion-header" onclick="app.toggleAccordion(this)">
+                        <h2>Solicitud y Estado</h2>
+                        <span class="material-symbols-outlined arrow">expand_more</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="form-group">
+                            <label>Solicitud del Cliente (Falla reportada)</label>
+                            <textarea name="solicitud_cliente" rows="4"
+                                placeholder="Describa los ruidos, fallas o servicios solicitados..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Historial / Notas Taller</label>
+                            <textarea name="historial_servicio" rows="2" placeholder="Notas internas..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. Firma del Cliente -->
+                <div class="card form-section">
+                    <h2>Firma de Aceptación</h2>
+                    <div class="form-group">
+                        <label>Firma del Cliente</label>
+                        <div class="signature-wrapper"
+                            style="border: 2px dashed #ccc; background: #fff; touch-action: none; border-radius: 8px;">
+                            <canvas id="signature-pad" width="600" height="200"
+                                style="width: 100%; height: 150px; display: block;"></canvas>
+                        </div>
+                        <div style="text-align: right; margin-top: 5px;">
+                            <button type="button" id="btn-clear-signature" class="btn-secondary small">Borrar
+                                Firma</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. Legal Disclaimer -->
+                <div class="card form-section" style="font-size: 0.8rem; color: #555; text-align: justify;">
+                    <p><strong>Autorizo el trabajo precisado y acepto estas
+                            condiciones:</strong></p>
+                    <ol style="padding-left: 20px; margin: 0;">
+                        <li>Los repuestos, combustibles lubricantes y materiales, los
+                            suministra el taller, salvo
+                            estipulación contraria.</li>
+                        <li>Los riesgos y peligros del vehículo entregado al Taller
+                            pertenecen exclusiva y totalmente el
+                            dueño todo el tiempo que el automotor permanezca en el mismo...
+                            (ver más en recibo oficial).
+                        </li>
+                    </ol>
+                    <p style="margin-top: 5px; font-style: italic;">(Texto completo
+                        disponible en la constancia
+                        generada)</p>
+                </div>
+
+                <!-- Actions -->
+                <!-- Actions -->
+                <div class="form-actions sticky-footer"
+                    style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 12px; background: #fff; border-top: 1px solid #ddd; z-index: 100;">
+                    <style>
+                        .form-actions button {
+                            display: flex !important;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 6px;
+                        }
+
+                        .form-actions button span.material-symbols-outlined {
+                            font-size: 20px !important;
+                            line-height: 1 !important;
+                            margin: 0;
+                        }
+                    </style>
+
+                    <!-- Row 1: WhatsApp + Img -->
+                    <button type="button" class="btn-whatsapp"
+                        style="display: flex; justify-content: center; align-items: center; gap: 8px;"
+                        onclick="app.sendWhatsApp()">
+                        <span class="material-symbols-outlined">chat</span> WhatsApp
+                    </button>
+                    <button type="button" id="btn-download" class="btn-secondary"
+                        style="display:none; justify-content: center; align-items: center; gap: 5px;"
+                        onclick="app.processCapture(app.getFormData(), 'download', this)">
+                        <span class="material-symbols-outlined">download</span> Descargar
+                    </button>
+
+                    <!-- Row 2: Enviar + Cancelar -->
+                    <button type="button" id="btn-share" class="btn-secondary"
+                        style="display:none; justify-content: center; align-items: center; gap: 5px;"
+                        onclick="app.processCapture(app.getFormData(), 'share', this)">
+                        <span class="material-symbols-outlined">share</span> Enviar
+                    </button>
+                    <button type="button" class="btn-cancel"
+                        style="background-color: #f5f5f5; color: #333; border: 1px solid #ccc; font-weight: 600;"
+                        onclick="app.navigateTo('dashboard')">Cancelar</button>
+
+                    <!-- Row 3: Eliminar (Full) -->
+                    <button type="button" id="btn-delete" class="btn-cancel"
+                        style="display:none; background-color: #d32f2f; color: white; justify-content: center; align-items: center; gap: 6px; grid-column: 1 / -1;"
+                        onclick="app.deleteOrder()">
+                        <span class="material-symbols-outlined">delete</span> Eliminar
+                    </button>
+
+                    <!-- Row 4: Guardar (Full) -->
+                    <button type="submit" class="btn-save"
+                        style="display: flex; justify-content: center; align-items: center; gap: 8px; grid-column: 1 / -1; width: 100%;">
+                        <span class="material-symbols-outlined">save</span> Guardar Orden
+                    </button>
+                </div>
+            </form>
+        </main>
+
+        <!-- Hidden Receipt Template for Capture -->
+        <div id="capture-container"
+            style="position: absolute; left: -9999px; top: 0; width: 600px; background: white; color: black; padding: 20px; font-family: sans-serif;">
+            <!-- Watermark -->
+            <div
+                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.04; pointer-events: none; width: 60%; z-index: 0;">
+                <img src="logo.PNG" style="width: 100%; display: block;">
+            </div>
+
+            <!-- Header Premium -->
+            <div
+                style="position: relative; z-index: 10; display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #FF8800; padding-bottom: 15px; margin-bottom: 20px;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <img src="logo.PNG" style="height: 70px; object-fit: contain;">
+                    <div>
+                        <h2
+                            style="margin: 0; color: #333; font-weight: 800; font-size: 1.6rem; letter-spacing: -0.5px;">
+                            CONSTANCIA DE INGRESO</h2>
+                        <p
+                            style="margin: 5px 0 0 0; font-size: 0.8rem; color: #666; text-transform: uppercase; letter-spacing: 1px;">
+                            MecaTronia Taller Digital</p>
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <!-- Header Simplificado y Legible -->
+                    <div style="text-align: right;">
+                        <h3 id="cap-orden"
+                            style="margin: 0; font-size: 1.8rem; font-weight: 800; font-family: sans-serif; color: #FF8800; letter-spacing: -1px;">
+                            #0000</h3>
+                    </div>
+                    <div style="margin-top: 10px; font-size: 0.85rem; color: #555;">
+                        <p style="margin: 0;"><strong>Ingreso:</strong> <span id="cap-fecha"
+                                style="font-family: 'Roboto Mono', monospace;">--/--/--</span></p>
+                        <p style="margin: 3px 0 0 0;"><strong>Entrega:</strong> <span id="cap-entrega"
+                                style="font-family: 'Roboto Mono', monospace; font-weight: bold;">Por Confirmar</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                <h4
+                    style="margin-top: 0; color: #FF8800; font-size: 1.1rem; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 10px; text-transform: uppercase;">
+                    INFO CLIENTE</h4>
+
+                <!-- Boarding Pass Style Client Info -->
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 5px;">
+                    <div>
+                        <p style="font-size: 0.7rem; color: #888; text-transform: uppercase; margin: 0 0 2px 0;">
+                            Propietario</p>
+                        <h2 style="margin: 0; color: #333; font-size: 1.4rem; font-weight: 800; text-transform: capitalize;"
+                            id="cap-cliente">Nombre Cliente</h2>
+                    </div>
+                    <div style="text-align: right;">
+                        <p style="font-size: 0.7rem; color: #888; text-transform: uppercase; margin: 0 0 2px 0;">
+                            Identificación / NIT</p>
+                        <p style="margin: 0; font-weight: bold; font-family: 'Roboto Mono', monospace; font-size: 1rem;"
+                            id="cap-id">123456789</p>
+                    </div>
+                </div>
+                <div
+                    style="margin-top: 8px; font-size: 0.8rem; color: #555; border-top: 1px dashed #eee; padding-top: 5px;">
+                    <strong>Asesor a Cargo:</strong> <span id="cap-asesor">--</span>
+                </div>
+
+                <h4
+                    style="margin-top: 20px; margin-bottom: 12px; color: #FF8800; font-size: 1.1rem; border-bottom: 1px solid #ddd; padding-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;">
+                    INFO VEHÍCULO</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; position: relative;">
+                    <!-- Placa Estilo Premium -->
+                    <div>
+                        <p style="margin:0 0 5px 0; font-size: 0.8rem; color: #666;">Placa del Vehículo</p>
+                        <div
+                            style="display: inline-block; background: #FFD600; color: #000; border: 3px solid #000; border-radius: 8px; padding: 2px 15px; font-family: 'Oswald', sans-serif; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);">
+                            <span id="cap-placa"
+                                style="font-size: 1.8rem; font-weight: bold; letter-spacing: 2px; text-transform: uppercase;">AAA-000</span>
+                        </div>
+                    </div>
+
+                    <!-- Combustible Visual -->
+                    <div>
+                        <p style="margin:0 0 5px 0; font-size: 0.8rem; color: #666;">Nivel Combustible: <strong
+                                id="cap-gas-text">50%</strong></p>
+                        <div
+                            style="width: 100%; height: 18px; background: #eee; border-radius: 10px; border: 1px solid #ccc; overflow: hidden; position: relative;">
+                            <!-- Marcas de cuarto de tanque -->
+                            <div
+                                style="position: absolute; left: 25%; height: 100%; width: 1px; background: rgba(0,0,0,0.1);">
+                            </div>
+                            <div
+                                style="position: absolute; left: 50%; height: 100%; width: 1px; background: rgba(0,0,0,0.1);">
+                            </div>
+                            <div
+                                style="position: absolute; left: 75%; height: 100%; width: 1px; background: rgba(0,0,0,0.1);">
+                            </div>
+
+                            <div id="cap-gas-bar"
+                                style="width: 50%; height: 100%; background: #FF8800; border-radius: 10px 0 0 10px; transition: width 0.3s;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Datos Técnicos Monospace -->
+                    <div
+                        style="grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #f9f9f9; padding: 10px; border-radius: 6px; border: 1px dashed #ddd;">
+                        <p style="margin:0;"><strong>Kms:</strong> <span id="cap-km"
+                                style="font-family: 'Roboto Mono', monospace;">0</span></p>
+                        <p style="margin:0;"><strong>Tipo:</strong> <span id="cap-tipo">Auto</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clone of Checklist -->
+            <div style="margin-bottom: 20px;">
+                <h4
+                    style="margin-top: 20px; margin-bottom: 10px; color: #FF8800; font-size: 1.0rem; border-bottom: 1px solid #ddd; padding-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;">
+                    INVENTARIO & PERTENENCIAS</h4>
+                <div id="cap-inventory" style="display: flex; flex-wrap: wrap; gap: 10px; font-size: 0.9rem;">
+                    <!-- Items injected here -->
+                </div>
+                <p style="margin-top: 10px; font-size: 0.9rem;"><strong>Pertenencias:</strong> <span
+                        id="cap-pertenencias">Ninguna</span></p>
+            </div>
+
+            <!-- New Section: Solicitud y Notas -->
+            <div
+                style="margin-bottom: 20px; background: #fffbe6; padding: 10px; border-radius: 5px; border: 1px solid #ffe58f;">
+                <p style="margin: 0 0 5px 0;"><strong>Solicitud Cliente:</strong> <span id="cap-solicitud">No
+                        especificada</span></p>
+                <p id="cap-notas-row" style="margin: 5px 0 0 0; display:none;"><strong>Notas Taller:</strong> <span
+                        id="cap-notas"></span></p>
+            </div>
+
+            <!-- Clone of Damage Diagram -->
+            <div>
+                <h4
+                    style="border-bottom: 2px solid #FF8800; padding-bottom: 5px; margin-bottom: 10px; color: #333; font-weight: 800; text-transform: uppercase; font-size: 0.9rem;">
+                    Estado Exterior y Daños</h4>
+
+                <!-- Scanner Frame Wrapper -->
+                <div
+                    style="position: relative; padding: 10px; background: #fafafa; border: 1px solid #ddd; border-radius: 8px;">
+                    <!-- 'Scanner' Decor Corners -->
+                    <div
+                        style="position: absolute; top: 0; left: 0; width: 15px; height: 15px; border-top: 2px solid #FF8800; border-left: 2px solid #FF8800; border-top-left-radius: 4px;">
+                    </div>
+                    <div
+                        style="position: absolute; top: 0; right: 0; width: 15px; height: 15px; border-top: 2px solid #FF8800; border-right: 2px solid #FF8800; border-top-right-radius: 4px;">
+                    </div>
+                    <div
+                        style="position: absolute; bottom: 0; left: 0; width: 15px; height: 15px; border-bottom: 2px solid #FF8800; border-left: 2px solid #FF8800; border-bottom-left-radius: 4px;">
+                    </div>
+                    <div
+                        style="position: absolute; bottom: 0; right: 0; width: 15px; height: 15px; border-bottom: 2px solid #FF8800; border-right: 2px solid #FF8800; border-bottom-right-radius: 4px;">
+                    </div>
+
+                    <!-- Host with Grid Background -->
+                    <div id="cap-diagram-host"
+                        style="position: relative; overflow: hidden; border: 1px dashed #ccc; background-image: radial-gradient(#ddd 1px, transparent 1px); background-size: 20px 20px; border-radius: 4px;">
+                        <!-- Clone of UI rendered here -->
+                    </div>
+                </div>
+                <!-- Damage Legend -->
+                <div
+                    style="margin-top: 5px; font-size: 0.8rem; display: flex; gap: 15px; justify-content: center; color: #555;">
+                    <span>➖ Rayón</span>
+                    <span style="display: flex; align-items: center; gap: 4px;"><b
+                            style="color: #aa00ff; font-size: 1.2em;">✖</b> Golpe</span>
+                    <span>🟠 Sumidura</span>
+                </div>
+            </div>
+
+            <!-- Legal Disclaimer in Receipt -->
+            <div
+                style="margin-top: 20px; font-size: 5px; color: #666; text-align: justify; border-top: 1px solid #ddd; padding-top: 5px;">
+                <p style="margin: 0 0 2px 0; font-size: 5px; line-height: 1;"><strong>CONDICIONES:</strong> Autorizo el
+                    trabajo y acepto:
+                </p>
+                <ol style="padding-left: 8px; margin: 0; line-height: 1.1;">
+                    <li><strong>Suministros:</strong> Los repuestos, lubricantes y materiales serán suministrados por el
+                        taller, salvo acuerdo contrario. No hay garantía sobre repuestos traídos por el cliente.</li>
+                    <li><strong>Exención de Responsabilidad Civil:</strong> El vehículo permanece en el taller por
+                        cuenta y riesgo del propietario. El taller no responde por pérdidas totales o parciales
+                        ocasionadas por fuerza mayor, caso fortuito, incendio, terremoto, asonada, robo a mano armada o
+                        eventos ajenos al control directo del taller.</li>
+                    <li><strong>Objetos Personales:</strong> El taller NO se hace responsable por objetos personales
+                        (dinero, joyas, electrónicos, gafas, documentos, etc.) que no hayan sido declarados
+                        explícitamente en el inventario de este documento.</li>
+                    <li><strong>Pruebas de Ruta:</strong> Se autoriza al taller a operar el vehículo en vías públicas
+                        para pruebas de diagnóstico y verificación de reparaciones, a riesgo del propietario.</li>
+                    <li><strong>Derecho de Retención:</strong> El taller ejercerá el derecho de retención del vehículo
+                        (Art. 2417 C. Civil) hasta la cancelación total de la factura por servicios y repuestos.</li>
+                    <li><strong>Abandono y Parqueadero:</strong> Una vez notificada la terminación del servicio se
+                        cobrará un cargo diario por concepto de parqueadero y gastos administrativos. El vehículo será
+                        enviado a bodega y se le notificará al cliente. Si el vehículo
+                        no es retirado en 90 días, se iniciarán los trámites legales de abandono correspondientes.</li>
+                    <li><strong>Garantías:</strong> La garantía cubre exclusivamente defectos de mano de obra y
+                        repuestos provistos por el taller, válida por un periodo limitado y con presentación de factura.
+                        No cubre partes eléctricas ni desgaste normal.</li>
+                    <li><strong>Daños Ocultos:</strong> Si durante el proceso de reparación se detectan daños no
+                        visibles en la inspección inicial, se notificará al cliente. El taller no es responsable por
+                        fallas preexistentes no reportadas.</li>
+                    <li><strong>Repuestos Usados:</strong> Las partes reemplazadas que no sean reclamadas al momento de
+                        retirar el vehículo serán desechadas por el taller conforme a normas ambientales.</li>
+                    <li><strong>Datos Personales:</strong> Autorizo el tratamiento de mis datos personales para fines
+                        relacionados con el servicio (Ley de Protección de Datos).</li>
+                </ol>
+            </div>
+
+            <!-- Signature Capture in Receipt -->
+            <div style="margin-top: 15px; margin-bottom: 10px;">
+                <p style="margin: 0 0 5px 0; font-size: 0.8rem;"><strong>Firma de
+                        Aceptación:</strong></p>
+                <div style="height: 80px; display: flex; align-items: end;">
+                    <img id="cap-signature" src="" style="max-height: 80px; max-width: 250px; display: none;">
+                </div>
+            </div>
+
+            <!-- Brand Footer (Premium Solid Bar) -->
+            <div
+                style="margin-top: 30px; background: #FF8800; padding: 10px 20px; text-align: center; font-size: 0.75rem; color: white; border-radius: 0 0 4px 4px; box-shadow: 0 -2px 5px rgba(0,0,0,0.1);">
+                <p style="margin: 0; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase;">MecaTronia
+                    Taller Digital</p>
+                <p style="margin: 2px 0 0 0; opacity: 0.9;">NIT 7727694 • Calle 51 A #1w-06 Alcazura (Cerca Coca-Cola) •
+                    soporte@mecatronia.com</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

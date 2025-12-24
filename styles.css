@@ -1,3 +1,4 @@
+/* --- GLOBAL STROKE --- */
 :root {
     --bg-app: #121212;
     --bg-card: #1E1E1E;
@@ -26,7 +27,6 @@ body {
     background-color: var(--bg-app);
     color: var(--color-text-main);
     padding-bottom: 80px;
-    /* Space for sticky footer */
 }
 
 h1,
@@ -52,14 +52,10 @@ h3 {
     border-bottom: 1px solid #333;
 }
 
-.logo-text {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: white;
-}
-
-.logo-text span {
-    color: var(--primary);
+.brand-logo {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
 }
 
 .nav-links {
@@ -98,14 +94,12 @@ h3 {
 .view {
     padding: 20px;
     padding-bottom: 120px;
-    /* Space for fixed footer */
     max-width: 1200px;
     margin: 0 auto;
     opacity: 0;
     transform: translateY(10px);
     transition: opacity 0.3s ease, transform 0.3s ease;
     display: none;
-    /* Hidden by default */
 }
 
 .view.active {
@@ -114,105 +108,212 @@ h3 {
     transform: translateY(0);
 }
 
-/* Optimize Footer Mobile */
-@media (max-width: 600px) {
-    .form-actions {
-        padding: 10px;
-        gap: 8px;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        /* Force buttons to wrap */
-    }
-
-    .form-actions button {
-        flex: 1 1 45%;
-        /* Approx 50% width */
-        padding: 10px 5px;
-        font-size: 0.9rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    /* Make Save Order standout and full width if needed, or keep 2x2 grid */
-    .btn-save {
-        background-color: var(--primary);
-        font-weight: 800;
-        min-width: 100%;
-        /* Force Save button to take full row at bottom */
-        order: 10;
-        margin-top: 5px;
-    }
-
-    .btn-cancel {
-        margin-right: 0 !important;
-        order: 1;
-    }
-
-    /* Secondary buttons (Share/Download) will fill the first row */
-}
-
 .hidden {
     display: none !important;
 }
 
-/* DASHBOARD */
-.section-header {
-    margin-bottom: 24px;
-}
+/* --- PREMIUM FORM STYLES --- */
 
-.search-bar input {
+/* 1. Inputs & Focus Effects */
+.form-group input,
+.form-group textarea,
+.form-group select {
     width: 100%;
-    padding: 12px 16px;
-    background: var(--bg-card);
+    background: var(--bg-input);
     border: 1px solid #333;
-    border-radius: var(--border-radius);
-    color: white;
+    border-radius: 8px;
+    /* Softer radius */
+    padding: 14px 16px;
+    /* Larger touch area */
     font-size: 1rem;
-    margin-top: 10px;
+    color: white;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-.orders-grid {
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(255, 136, 0, 0.2);
+    /* Orange Glow */
+    background: #333;
+    /* Slightly lighter on focus */
+    outline: none;
+    transform: translateY(-1px);
+}
+
+/* 2. Tactile Inventory Tiles */
+.inventory-grid {
     display: grid;
-    gap: 16px;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 12px;
 }
 
-.order-card {
-    background: var(--bg-card);
-    padding: 16px;
-    border-radius: var(--border-radius);
-    border-left: 4px solid var(--primary);
+.checkbox-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #2A2A2A;
+    border: 2px solid #333;
+    border-radius: 12px;
+    padding: 15px 10px;
     cursor: pointer;
-    transition: transform 0.2s;
+    text-align: center;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    /* Bounce effect */
+    position: relative;
+    user-select: none;
+    font-weight: 500;
+    font-size: 0.85rem;
+    color: #bbb;
+    min-height: 80px;
+    /* Make them square-ish */
 }
 
-.order-card:hover {
-    transform: translateY(-2px);
-    background: #252525;
+/* Hide native checkbox but keep accessibility */
+.checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
 }
 
-.order-header {
+.checkbox-container .checkmark {
+    display: none;
+}
+
+/* Remove old checkmark */
+
+/* Active State (Checked) */
+.checkbox-container:has(input:checked) {
+    background: #FF8800;
+    /* Full Orange Background */
+    border-color: #FF8800;
+    color: #000;
+    /* Black Text */
+    font-weight: 800;
+    transform: translateY(-4px);
+    box-shadow: 0 6px 12px rgba(255, 136, 0, 0.3);
+}
+
+/* Add Tick Icon when checked */
+.checkbox-container:has(input:checked)::after {
+    content: '✔';
+    font-size: 1.4rem;
+    display: block;
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+/* 3. Segmented Control for Damage Type */
+.damage-type-selector {
+    display: flex;
+    background: #111;
+    padding: 5px;
+    border-radius: 12px;
+    gap: 5px;
+    margin-bottom: 20px;
+    border: 1px solid #333;
+}
+
+.damage-type-selector label {
+    flex: 1;
+    text-align: center;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #888;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 0 !important;
+}
+
+.damage-type-selector label input {
+    display: none;
+}
+
+.damage-type-selector label .badge {
+    margin: 0;
+    display: inline;
+    padding: 0;
+    background: none;
+    border: none;
+    font-size: inherit;
+    color: inherit;
+}
+
+/* Selected State */
+.damage-type-selector label:has(input:checked) {
+    background: #333;
+    color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Unique Colors per selection */
+.damage-type-selector label:has(input[value="rayon"]:checked) {
+    background: #FFD600;
+    color: black;
+}
+
+.damage-type-selector label:has(input[value="golpe"]:checked) {
+    background: #aa00ff;
+    color: white;
+}
+
+.damage-type-selector label:has(input[value="sumidura"]:checked) {
+    background: #2196F3;
+    color: white;
+}
+
+
+/* 4. Smooth Accordion Transitions */
+.form-section {
+    padding: 0 !important;
+    overflow: hidden;
+    transition: box-shadow 0.3s;
+}
+
+.accordion-header {
+    background: #2a2a2a;
+    padding: 18px 20px;
     display: flex;
     justify-content: space-between;
-    margin-bottom: 8px;
-    font-size: 0.9rem;
-    color: var(--color-text-muted);
+    align-items: center;
+    cursor: pointer;
+    border-bottom: 1px solid #333;
 }
 
-.order-plate {
-    font-family: 'Oswald', sans-serif;
-    font-size: 1.8rem;
-    color: white;
-    margin-bottom: 4px;
+.accordion-content {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.5s cubic-bezier(0, 1, 0, 1), opacity 0.5s ease-in-out;
+    background: #222;
 }
 
-.order-client {
-    font-size: 1rem;
-    color: var(--color-text-main);
+.form-section.active .accordion-content {
+    max-height: 2000px;
+    /* Large enough */
+    opacity: 1;
+    transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
 }
 
-/* FORMS */
+.form-section.active .material-symbols-outlined.arrow {
+    transform: rotate(180deg);
+}
+
+
+/* OTHER UTILS */
 .card {
     background: var(--bg-card);
     padding: 24px;
@@ -229,8 +330,8 @@ h3 {
 }
 
 .btn-back {
-    background: none;
-    border: 1px solid #444;
+    background: #333;
+    border: none;
     color: white;
     padding: 8px 12px;
     border-radius: 8px;
@@ -270,27 +371,6 @@ label {
     font-weight: 500;
 }
 
-input,
-select,
-textarea {
-    width: 100%;
-    background: var(--bg-input);
-    border: 1px solid #333;
-    padding: 12px;
-    border-radius: 8px;
-    color: white;
-    font-family: 'Inter', sans-serif;
-    font-size: 1rem;
-    transition: border-color 0.2s;
-}
-
-input:focus,
-textarea:focus {
-    outline: none;
-    border-color: var(--primary);
-}
-
-/* Specific Inputs */
 .large-input {
     font-size: 1.5rem;
     font-family: 'Oswald', sans-serif;
@@ -298,222 +378,36 @@ textarea:focus {
     letter-spacing: 2px;
     font-weight: 700;
     text-align: center;
-    background: #000;
+    background: #000 !important;
 }
 
-/* Inventory Checkboxes */
-.inventory-grid {
+/* Dashboard Cards */
+.orders-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-    gap: 12px;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }
 
-.checkbox-container {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px;
-    background: var(--bg-input);
-    border-radius: 6px;
+.order-card {
+    background: var(--bg-card);
+    padding: 16px;
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--primary);
     cursor: pointer;
-    font-size: 0.9rem;
-    user-select: none;
+    transition: transform 0.2s;
 }
 
-.checkbox-container input {
-    width: auto;
-    accent-color: var(--primary);
+.order-card:hover {
+    transform: translateY(-2px);
+    background: #252525;
 }
 
-/* Car Diagram & Inspector Fix */
-/* Car Diagram & Inspector Styles */
-.damage-inspector-container {
-    background: #f5f5f5;
-    border-radius: 8px;
-    padding: 10px;
-    text-align: center;
-}
-
-#car-diagram-wrapper {
-    position: relative;
-    display: inline-block;
-    width: 100%;
-    max-width: 800px;
-    cursor: crosshair;
-    user-select: none;
-    -webkit-user-select: none;
-    line-height: 0;
-}
-
-#car-svg {
-    display: block;
-    width: 100%;
-    height: auto;
-    pointer-events: none;
-}
-
-/* New Detailed Car Styles */
-.car-body {
-    fill: #ffffff;
-    stroke: #333;
-    stroke-width: 2px;
-    vector-effect: non-scaling-stroke;
-}
-
-.car-window {
-    fill: #e1f5fe;
-    /* Light Blue */
-    stroke: #333;
-    stroke-width: 2px;
-}
-
-.car-light {
-    fill: #fff9c4;
-    /* Light Yellow */
-    stroke: #333;
-}
-
-.car-taillight {
-    fill: #ffcdd2;
-    /* Light Red */
-    stroke: #b71c1c;
-}
-
-.car-line {
-    fill: none;
-    stroke: #333;
-    stroke-width: 2px;
-    stroke-linecap: round;
-}
-
-.car-part-hover:hover {
-    fill: #eee;
-}
-
-.label-text {
-    font-size: 16px;
-    font-weight: 700;
-    fill: #333;
-    font-family: 'Oswald', sans-serif;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-/* Marker Layer (Restored) */
-#damage-markers-layer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    /* CRITICAL */
-    overflow: hidden;
-    z-index: 10;
-}
-
-.marker-spot {
-    position: absolute;
-    width: 24px;
-    height: 24px;
-    transform: translate(-50%, -50%);
-    font-size: 22px;
-    /* Desktop Base Size */
-    line-height: 1;
-    text-align: center;
-    pointer-events: auto;
-    cursor: pointer;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-    z-index: 20;
-    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-@media (max-width: 600px) {
-    .marker-spot {
-        width: 16px;
-        height: 16px;
-        font-size: 14px;
-        /* Smaller on mobile to fit diagram */
-    }
-}
-
-@keyframes popIn {
-    from {
-        transform: translate(-50%, -50%) scale(0);
-    }
-
-    to {
-        transform: translate(-50%, -50%) scale(1);
-    }
-}
-
-/* --- DAMAGE SELECTOR CONTROLS --- */
-.damage-controls {
-    margin-top: 15px;
+.order-header {
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-between;
-    align-items: center;
-    background: #eee;
-    padding: 10px;
-    border-radius: 8px;
-    color: #333;
-    gap: 10px;
-}
-
-.damage-type-selector {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-.damage-type-selector input[type="radio"] {
-    display: none;
-}
-
-.damage-type-selector label {
-    cursor: pointer;
-    transition: transform 0.1s;
-}
-
-.damage-type-selector label:active {
-    transform: scale(0.95);
-}
-
-.badge {
-    padding: 8px 16px;
-    border-radius: 20px;
+    margin-bottom: 8px;
     font-size: 0.9rem;
-    font-weight: bold;
-    margin-right: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    border: 2px solid transparent;
-    opacity: 0.6;
-    transition: all 0.2s ease;
-}
-
-.damage-type-selector input:checked+.badge {
-    opacity: 1;
-    border-color: #333;
-    transform: scale(1.05);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.badge.yellow {
-    background: #ffeb3b;
-    color: black;
-}
-
-.badge.red {
-    background: #ff5252;
-    color: white;
-}
-
-.badge.blue {
-    background: #448aff;
-    color: white;
+    color: var(--color-text-muted);
 }
 
 /* Sticky Footer */
@@ -552,60 +446,13 @@ textarea:focus {
     cursor: pointer;
 }
 
-.btn-secondary {
-    background: #444;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-}
-
-.empty-state {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 40px;
-    color: var(--color-text-muted);
-}
-
-/* --- NEW LOGO & FUEL STYLES (ADDED) --- */
-
-/* Logo */
-/* Logo */
-.brand-logo {
-    height: 40px;
-    /* Reduced from 50px */
-    width: auto;
-    object-fit: contain;
-}
-
-@media (max-width: 600px) {
-    :root {
-        --nav-height: 55px;
-        /* Compacter header on mobile */
-    }
-
-    .brand-logo {
-        height: 25px;
-        /* Much smaller for mobile */
-    }
-
-    .navbar {
-        padding: 0 15px;
-        /* Less padding on sides */
-    }
-}
-
-/* Fuel Selector Segmented Control */
+/* Fuel Selector (Kept functional but unified style) */
 .fuel-selector-group {
     display: flex;
-    justify-content: space-between;
     gap: 8px;
-    margin-top: 10px;
     background: #1a1a1a;
     padding: 6px;
-    border-radius: var(--border-radius);
+    border-radius: 12px;
     border: 1px solid #333;
 }
 
@@ -615,73 +462,82 @@ textarea:focus {
     position: relative;
 }
 
-/* Hide actual radio input */
 .fuel-option input {
     position: absolute;
     opacity: 0;
     cursor: pointer;
-    height: 0;
-    width: 0;
 }
 
-/* The visual box */
 .fuel-box {
     display: flex;
     align-items: center;
     justify-content: center;
     height: 40px;
-    background: var(--bg-input);
-    border: 1px solid #444;
-    border-radius: 6px;
-    color: var(--color-text-muted);
-    font-weight: 700;
-    font-family: 'Oswald', sans-serif;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    font-size: 1.1rem;
-}
-
-/* Hover effect */
-.fuel-option:hover .fuel-box {
-    border-color: #666;
     background: #333;
+    border-radius: 6px;
+    color: #aaa;
+    font-weight: 700;
+    transition: all 0.2s;
 }
 
-/* Selected States - Color Coding */
 .fuel-option input:checked+.fuel-box {
     color: #000;
-    border-color: transparent;
     transform: scale(1.05);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
-/* Specific Colors for Levels */
 .fuel-option input:checked+.level-0 {
     background: #FF4444;
-    /* Red for Empty */
     color: white;
 }
 
 .fuel-option input:checked+.level-25 {
     background: #FF8800;
-    /* Orange */
 }
 
 .fuel-option input:checked+.level-50 {
     background: #FFD600;
-    /* Yellow */
 }
 
 .fuel-option input:checked+.level-75 {
     background: #AEEA00;
-    /* Light Green */
 }
 
 .fuel-option input:checked+.level-100 {
     background: #00CC66;
-    /* Green */
 }
 
-/* Login Screen Styles (TEMPORAL) */
+/* Diagram */
+.damage-inspector-container {
+    background: #f5f5f5;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+#damage-markers-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 10;
+}
+
+.marker-spot {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    transform: translate(-50%, -50%);
+    font-size: 22px;
+    text-align: center;
+    pointer-events: auto;
+    cursor: pointer;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    z-index: 20;
+}
+
+/* Login */
 #login-screen {
     position: fixed;
     top: 0;
@@ -690,7 +546,6 @@ textarea:focus {
     height: 100vh;
     background-color: #1a1a1a;
     z-index: 10000;
-    /* Above everything */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -711,110 +566,92 @@ textarea:focus {
     max-width: 300px;
 }
 
-.login-box input {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: none;
-    border-radius: 5px;
+/* Mobile Optimizations */
+@media (max-width: 600px) {
+    .btn-save {
+        width: 100%;
+    }
+
+    .sticky-footer {
+        flex-wrap: wrap;
+    }
+
+    .checkbox-container {
+        min-height: 60px;
+        font-size: 0.75rem;
+    }
 }
 
-.login-box button {
-    width: 100%;
-    padding: 10px;
-    background: var(--primary);
-    border: none;
+/* --- RESTORED UTILS & BUTTONS --- */
+
+/* Search Bar Fix */
+.search-bar input {
+    background: #111;
+    /* Darker than standard input */
+    border: 1px solid #333;
+    padding: 12px 16px;
+    border-radius: 20px;
+    /* Pill shape for search */
+    margin-top: 10px;
     color: white;
-    font-weight: bold;
-    border-radius: 5px;
+}
+
+.search-bar input:focus {
+    border-color: var(--primary);
+    background: black;
+}
+
+/* Secondary Actions (Share/Download) */
+.btn-secondary {
+    background: #333;
+    color: white;
+    border: 1px solid #444;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
     cursor: pointer;
-}
-
-/* --- Accordions --- */
-.form-section {
-    padding: 0 !important;
-    /* Remove padding from card, move to content */
-    overflow: hidden;
-}
-
-.accordion-header {
-    background: #2a2a2a;
-    padding: 15px;
-    display: flex;
-    justify-content: space-between;
+    display: inline-flex;
     align-items: center;
-    cursor: pointer;
-    border-bottom: 1px solid #333;
+    gap: 8px;
+    transition: all 0.2s;
 }
 
-.accordion-header h2,
-.accordion-header h3 {
-    margin: 0;
-    font-size: 1.1rem;
-    color: var(--primary);
+.btn-secondary:hover {
+    background: #444;
+    transform: translateY(-1px);
 }
 
-.accordion-content {
-    padding: 20px;
-    display: none;
-    /* Hidden by default */
-}
-
-.form-section.active .accordion-content {
-    display: block;
-    animation: slideDown 0.3s ease-out;
-}
-
-.form-section.active .material-symbols-outlined.arrow {
-    transform: rotate(180deg);
-}
-
-.material-symbols-outlined.arrow {
-    transition: transform 0.3s ease;
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* --- WhatsApp Button --- */
+/* WhatsApp Button Restoration */
 .btn-whatsapp {
     background-color: #25D366 !important;
     color: white !important;
     border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
     font-weight: bold;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     width: 100%;
-    /* Mobile full width */
+    /* Mobile friendly */
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
 .btn-whatsapp:hover {
     background-color: #128C7E !important;
 }
 
-
-/* Loader Spinner */
+/* Loader */
 .loader {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     border: 2px solid #FFF;
     border-bottom-color: transparent;
     border-radius: 50%;
     display: inline-block;
-    box-sizing: border-box;
     animation: rotation 1s linear infinite;
-    vertical-align: middle;
 }
 
 @keyframes rotation {
