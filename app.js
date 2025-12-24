@@ -920,15 +920,17 @@ const app = {
                     card.style.display = 'flex';
                     card.style.alignItems = 'center';
                     card.style.gap = '6px';
-                    card.style.background = '#f0fff4'; // Fondo verde muy claro
-                    card.style.border = '1px solid #c6f6d5'; // Borde verde suave
+                    card.style.background = '#ffffff';
+                    card.style.border = '2px solid #333';
                     card.style.borderRadius = '5px';
                     card.style.padding = '4px 8px';
                     card.style.fontSize = '0.75rem';
-                    card.style.color = '#2f855a'; // Texto verde oscuro
+                    card.style.fontWeight = 'bold';
+                    card.style.color = '#000';
+                    card.style.boxShadow = '2px 2px 0 rgba(0,0,0,0.1)';
 
                     // Icono Check
-                    card.innerHTML = `<span style="font-weight:bold; font-size:1.1em;">✔</span> <span>${label}</span>`;
+                    card.innerHTML = `<span style="color:#FF8800; font-weight:bold; font-size:1.1em;">✔</span> <span>${label}</span>`;
 
                     invDiv.appendChild(card);
                 });
