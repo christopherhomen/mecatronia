@@ -1130,12 +1130,29 @@ const app = {
                     }
 
                     // 2. Abrir WhatsApp Directo (con delay para permitir descarga)
-                    const phone = (orderData.cliente_telefono || '').replace(/\D/g, '');
+                    // 2. Abrir WhatsApp (Robust Logic)
+                    let phone = (orderData.cliente_telefono || '').replace(/\D/g, '');
+
+                    // Si no hay teléfono 57, asumirlo o pedirlo
+                    if (!phone) {
+                        phone = prompt("El cliente no tiene teléfono guardado. Ingrese el número (ej: 3001234567):");
+                    }
+
                     if (phone) {
-                        const waUrl = `https://wa.me/57${phone}?text=${encodeURIComponent(customText || '')}`;
-                        setTimeout(() => window.open(waUrl, '_blank'), 1000);
+                        // Asegurar código país 57 si parece ser local
+                        if (phone.length === 10 && !phone.startsWith('57')) phone = '57' + phone;
+
+                        const waUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(customText || '')}`;
+
+                        // Intentar abrir sin bloqueo de popup
+                        app.toast("Abriendo WhatsApp...", "info");
+                        setTimeout(() => {
+                            const win = window.open(waUrl, '_blank');
+                            // Si el popup blocker lo detiene, cambiar la ventana actual
+                            if (!win) window.location.href = waUrl;
+                        }, 500);
                     } else {
-                        app.toast("Error: No hay teléfono para WhatsApp", "warning");
+                        app.toast("Se canceló el envío (Sin teléfono).", "warning");
                     }
 
                 } else {
