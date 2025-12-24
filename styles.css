@@ -380,6 +380,12 @@ label {
     color: #000 !important;
 }
 
+#marker-controls label,
+#marker-controls b,
+#marker-controls span {
+    color: #000 !important;
+}
+
 .large-input {
     font-size: 1.5rem;
     font-family: 'Oswald', sans-serif;
