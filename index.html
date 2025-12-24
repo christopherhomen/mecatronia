@@ -586,8 +586,26 @@
                 <h4
                     style="margin-top: 0; color: #FF8800; font-size: 1.1rem; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 10px; text-transform: uppercase;">
                     INFO CLIENTE</h4>
-                <p><strong>Nombre:</strong> <span id="cap-cliente">Nombre</span> | <strong>CC:</strong> <span
-                        id="cap-id">123</span> | <strong>Prof. Operativo:</strong> <span id="cap-asesor"></span></p>
+
+                <!-- Boarding Pass Style Client Info -->
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 5px;">
+                    <div>
+                        <p style="font-size: 0.7rem; color: #888; text-transform: uppercase; margin: 0 0 2px 0;">
+                            Propietario</p>
+                        <h2 style="margin: 0; color: #333; font-size: 1.4rem; font-weight: 800; text-transform: capitalize;"
+                            id="cap-cliente">Nombre Cliente</h2>
+                    </div>
+                    <div style="text-align: right;">
+                        <p style="font-size: 0.7rem; color: #888; text-transform: uppercase; margin: 0 0 2px 0;">
+                            Identificación / NIT</p>
+                        <p style="margin: 0; font-weight: bold; font-family: 'Roboto Mono', monospace; font-size: 1rem;"
+                            id="cap-id">123456789</p>
+                    </div>
+                </div>
+                <div
+                    style="margin-top: 8px; font-size: 0.8rem; color: #555; border-top: 1px dashed #eee; padding-top: 5px;">
+                    <strong>Asesor a Cargo:</strong> <span id="cap-asesor">--</span>
+                </div>
 
                 <h4
                     style="margin-top: 20px; margin-bottom: 12px; color: #FF8800; font-size: 1.1rem; border-bottom: 1px solid #ddd; padding-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;">
@@ -659,9 +677,32 @@
 
             <!-- Clone of Damage Diagram -->
             <div>
-                <h4 style="border-bottom: 1px solid #ddd;">Estado Exterior y Daños</h4>
-                <div id="cap-diagram-host" style="position: relative; overflow: hidden; border: 1px solid #eee;">
-                    <!-- Clone of UI rendered here -->
+                <h4
+                    style="border-bottom: 2px solid #FF8800; padding-bottom: 5px; margin-bottom: 10px; color: #333; font-weight: 800; text-transform: uppercase; font-size: 0.9rem;">
+                    Estado Exterior y Daños</h4>
+
+                <!-- Scanner Frame Wrapper -->
+                <div
+                    style="position: relative; padding: 10px; background: #fafafa; border: 1px solid #ddd; border-radius: 8px;">
+                    <!-- 'Scanner' Decor Corners -->
+                    <div
+                        style="position: absolute; top: 0; left: 0; width: 15px; height: 15px; border-top: 2px solid #FF8800; border-left: 2px solid #FF8800; border-top-left-radius: 4px;">
+                    </div>
+                    <div
+                        style="position: absolute; top: 0; right: 0; width: 15px; height: 15px; border-top: 2px solid #FF8800; border-right: 2px solid #FF8800; border-top-right-radius: 4px;">
+                    </div>
+                    <div
+                        style="position: absolute; bottom: 0; left: 0; width: 15px; height: 15px; border-bottom: 2px solid #FF8800; border-left: 2px solid #FF8800; border-bottom-left-radius: 4px;">
+                    </div>
+                    <div
+                        style="position: absolute; bottom: 0; right: 0; width: 15px; height: 15px; border-bottom: 2px solid #FF8800; border-right: 2px solid #FF8800; border-bottom-right-radius: 4px;">
+                    </div>
+
+                    <!-- Host with Grid Background -->
+                    <div id="cap-diagram-host"
+                        style="position: relative; overflow: hidden; border: 1px dashed #ccc; background-image: radial-gradient(#ddd 1px, transparent 1px); background-size: 20px 20px; border-radius: 4px;">
+                        <!-- Clone of UI rendered here -->
+                    </div>
                 </div>
                 <!-- Damage Legend -->
                 <div
@@ -719,9 +760,13 @@
                 </div>
             </div>
 
-            <div style="margin-top: 30px; text-align: center; font-size: 0.8rem; color: #888;">
-                <p>Mecatronia - NIT 7727694 - Dirección: Calle 51 A #1w-06 Alcazura;
-                    cerca Coca-Cola.</p>
+            <!-- Brand Footer (Premium Solid Bar) -->
+            <div
+                style="margin-top: 30px; background: #FF8800; padding: 10px 20px; text-align: center; font-size: 0.75rem; color: white; border-radius: 0 0 4px 4px; box-shadow: 0 -2px 5px rgba(0,0,0,0.1);">
+                <p style="margin: 0; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase;">MecaTronia
+                    Taller Digital</p>
+                <p style="margin: 2px 0 0 0; opacity: 0.9;">NIT 7727694 • Calle 51 A #1w-06 Alcazura (Cerca Coca-Cola) •
+                    soporte@mecatronia.com</p>
             </div>
         </div>
     </div>
