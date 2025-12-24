@@ -583,7 +583,8 @@ const app = {
                 actionsDiv.appendChild(btnS);
             }
 
-            // WhatsApp Button (Small Icon)
+            // WhatsApp Button (Small Icon) - Oculto temporalmente
+            /*
             const btnW = document.createElement('button');
             btnW.className = 'btn-secondary small';
             // SVG Icon for WhatsApp
@@ -597,6 +598,7 @@ const app = {
                 app.processCapture(od, 'whatsapp_direct', btnW);
             };
             actionsDiv.appendChild(btnW);
+            */
 
             // Download Button
             const btnD = document.createElement('button');
