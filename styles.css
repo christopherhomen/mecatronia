@@ -365,13 +365,13 @@ h3 {
 
 label {
     display: block;
-    margin-bottom: 8px;
-    font-size: 0.9rem;
-    color: #e0e0e0;
-    /* Brighter for readability */
-    font-weight: 600;
-    /* Semi-bold */
-    letter-spacing: 0.3px;
+    margin-bottom: 6px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--primary);
+    /* Orange for hierarchy */
+    font-weight: 700;
 }
 
 /* Explicit Black for Damage Controls Title */
