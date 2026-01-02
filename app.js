@@ -110,8 +110,8 @@ const app = {
 
     // Real Auth Login
     login: async () => {
-        const email = document.getElementById('login-email').value;
-        const password = document.getElementById('login-pass').value;
+        const email = document.getElementById('login-email').value.trim();
+        const password = document.getElementById('login-pass').value.trim();
         const errorMsg = document.getElementById('login-error');
         const loading = document.getElementById('login-loading');
         const btn = document.getElementById('btn-login-action');
