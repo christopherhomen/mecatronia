@@ -1,5 +1,5 @@
 /**
- * ServiAuto Diesel - PWA Logic v4 (Fresh Start)
+ * ServiAuto Diesel - PWA Logic v4.1 (Re-Entry Feature)
  */
 
 // --- CONFIGURACIÓN DE LA NUBE ---
@@ -611,6 +611,19 @@ const app = {
             };
             actionsDiv.appendChild(btnD);
 
+            // Botón Re-Ingreso (Copia datos estáticos)
+            const btnRe = document.createElement('button');
+            btnRe.className = 'btn-secondary small';
+            // Icono: Content Copy o History Edu
+            btnRe.innerHTML = '<span class="material-symbols-outlined" style="font-size:1.2rem; vertical-align:middle;">history_edu</span>';
+            btnRe.title = "Nuevo Ingreso (Mismo Vehículo)";
+            btnRe.style.color = "#FF8800";
+            btnRe.onclick = (e) => {
+                e.stopPropagation();
+                app.reEntryOrder(od);
+            };
+            actionsDiv.appendChild(btnRe);
+
             card.appendChild(actionsDiv);
 
             // Main Card Click
@@ -691,6 +704,39 @@ const app = {
             btnDownload.style.display = 'inline-block';
             btnDownload.onclick = () => app.processCapture(getData(), 'download');
         }
+    },
+
+    reEntryOrder: async (oldOrder) => {
+        // 1. Resetear formulario (Limpia daños, inventario, firma, etc.)
+        app.resetForm();
+
+        // 2. Generar Nuevo ID de Orden
+        try {
+            const newId = await app.generateOrderNumber();
+            document.getElementById('orden_numero').value = newId;
+        } catch (e) {
+            console.error("Error generando ID:", e);
+        }
+
+        // 3. Copiar Datos Estáticos (Cliente y Vehículo)
+        const form = document.getElementById('vehicle-form');
+        // No copiamos: KM, Combustible, Daños, Inventario, Fecha, Firma
+        const staticFields = [
+            'cliente_nombre', 'cliente_id', 'cliente_telefono', 'cliente_direccion', 'cliente_email',
+            'vehiculo_placa', 'vehiculo_tipo', 'vehiculo_anio', 'vehiculo_color',
+            'vehiculo_rombo', 'vehiculo_chasis', 'vehiculo_motor'
+        ];
+
+        staticFields.forEach(k => {
+            if (form.elements[k] && oldOrder[k]) {
+                form.elements[k].value = oldOrder[k];
+            }
+        });
+
+        // 4. Navegar y Notificar
+        app.navigateTo('new');
+        document.querySelector('.form-header h1').innerText = "Nuevo Ingreso (Registro Rápido)";
+        app.toast("📋 Datos cargados. Actualice KM e Inventario.", "success");
     },
 
     handleDiagramStart: (e) => {
